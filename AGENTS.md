@@ -49,6 +49,7 @@ Always read:
 - AGENTS.md
 - docs/
 - docs/roadmap/
+- docs/japanese-translations.md
 
 before editing the project.
 
