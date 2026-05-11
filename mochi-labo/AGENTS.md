@@ -2,6 +2,37 @@
 
 このリポジトリで作業するAI開発アシスタント向けの共通ルールです。
 
+## Design Philosophy
+
+- Minimal Japanese editorial design
+- Mobile-first
+- Calm atmosphere
+- Large negative space
+- Warm and trustworthy tone
+
+## Writing Style
+
+- Quiet emotional tone
+- Avoid aggressive marketing
+- Avoid medical claims
+- Prioritize readability
+
+## Development Rules
+
+- 既存の構造と命名を尊重する
+- 変更は小さく、意図が追いやすい単位にする
+- Preserve responsive layout
+- Prefer reusable structures
+- Avoid breaking stable versions
+- Keep components modular
+
+## Brand Mood
+
+- Deep-sea clinical
+- Industrial chic
+- Soft lighting
+- Calm Japanese editorial aesthetic
+
 ## プロジェクトの軸
 
 - AI × Care × Design
@@ -9,10 +40,8 @@
 - モバイルファースト
 - 再利用可能なテンプレ構造
 
-## 作業方針
+## 日本語UI方針
 
-- 既存の構造と命名を尊重する
-- 変更は小さく、意図が追いやすい単位にする
 - 日本語UIでは短く、やさしく、意味が明確な文言を優先する
 - モバイル表示を基準にしてから、デスクトップへ広げる
 - 汎用化できる要素は `shared-assets/` や各テンプレートの `stable/` に整理する

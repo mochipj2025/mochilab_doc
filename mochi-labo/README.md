@@ -1,6 +1,26 @@
-# mochi-labo
+# M.O.C.H.I. LABO
 
-AI × Care × Design を軸に、日本語ミニマルUIとモバイルファーストの体験を研究・開発するためのテンプレート集です。
+AI × Care × Design experimental lab.
+
+日本語ミニマルUIとモバイルファーストの体験を研究・開発するための小さなAI研究室です。
+
+## Projects
+
+- Promptmaker
+- Review Assistant
+- Future Karte UI
+
+## Philosophy
+
+試す
+↓
+失敗する
+↓
+気づく
+↓
+直す
+
+小さく作って改善するAI研究室。
 
 ## 目的
 
