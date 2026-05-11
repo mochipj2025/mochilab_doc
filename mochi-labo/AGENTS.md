@@ -2,6 +2,16 @@
 
 このリポジトリで作業するAI開発アシスタント向けの共通ルールです。
 
+## Core Rules
+
+- `stable/` フォルダは壊さない
+- `experimental/` は実験用として扱う
+- UIはモバイルファーストで設計する
+- 日本語可読性を優先する
+- 医療的表現は禁止する
+- 過度な広告デザインは禁止する
+- ミニマルで静かなデザインを維持する
+
 ## Design Philosophy
 
 - Minimal Japanese editorial design
