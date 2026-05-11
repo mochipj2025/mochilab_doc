@@ -48,8 +48,25 @@ Always read:
 - README.md
 - AGENTS.md
 - docs/
+- docs/roadmap/
 
 before editing the project.
+
+---
+
+## Roadmap Rules
+
+`docs/roadmap/` には中長期構想が保存されています。
+
+開発時は、方向性、世界観、ブランドトーン、コンテンツ戦略を崩さないようにしてください。
+
+特に以下を優先:
+
+- 静かな空気感
+- 居られるデザイン
+- Safe Base思想
+- モバイル可読性
+- 過剰演出の回避
 
 ---
 
