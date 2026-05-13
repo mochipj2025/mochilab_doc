@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>あなただけの相棒maker</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --surface: #fffdf8;
+      --surface-soft: #f0eee7;
+      --ink: #1d2f39;
+      --muted: #64747b;
+      --line: #c8aa82;
+      --line-strong: #9c7042;
+      --sea: #143746;
+      --amber: #b9854a;
+      --amber-soft: #ead8bd;
+      --focus: #2e6573;
+      --shadow: 0 18px 42px rgba(32, 46, 52, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, sans-serif;
+      line-height: 1.8;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    button,
+    textarea,
+    input {
+      font: inherit;
+    }
+
+    .page {
+      min-height: 100svh;
+      padding: 24px 16px 40px;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.78), rgba(247, 244, 238, 0.96)),
+        radial-gradient(circle at 14% 6%, rgba(179, 212, 211, 0.38), transparent 28%),
+        radial-gradient(circle at 88% 14%, rgba(185, 133, 74, 0.14), transparent 24%);
+    }
+
+    .shell {
+      width: min(100%, 1120px);
+      margin: 0 auto;
+    }
+
+    .intro {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+
+    .hero-art {
+      position: relative;
+      min-height: 172px;
+      overflow: hidden;
+      border: 2px solid var(--line-strong);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(255, 253, 248, 0.92), rgba(234, 216, 189, 0.44)),
+        radial-gradient(circle at 72% 38%, rgba(134, 190, 203, 0.32), transparent 30%);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-art::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(156, 112, 66, 0.28);
+      border-radius: 7px;
+      pointer-events: none;
+    }
+
+    .hero-art img {
+      position: absolute;
+      right: -14px;
+      bottom: -18px;
+      width: min(54vw, 220px);
+      max-width: none;
+      filter: drop-shadow(0 18px 26px rgba(40, 31, 20, 0.16));
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      color: var(--sea);
+      font-size: clamp(28px, 9vw, 56px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 640px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tool {
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      border: 2px solid var(--line-strong);
+      border-radius: 8px;
+      background: rgba(255, 253, 248, 0.9);
+      box-shadow: var(--shadow), inset 0 0 0 1px rgba(255, 253, 248, 0.88);
+    }
+
+    .panel.decorated {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel.decorated::after {
+      content: "";
+      position: absolute;
+      right: -34px;
+      top: -18px;
+      width: 132px;
+      aspect-ratio: 1;
+      background: url("../assets/companion-mochi-stickers.png") center / cover no-repeat;
+      opacity: 0.2;
+      transform: rotate(4deg);
+      pointer-events: none;
+    }
+
+    .panel-inner {
+      display: grid;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    h2 {
+      color: var(--sea);
+      font-size: 17px;
+      line-height: 1.45;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .button {
+      min-height: 48px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 11px 16px;
+      cursor: pointer;
+      color: #fffdf8;
+      background: var(--sea);
+      font-weight: 700;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      background: #1b4657;
+    }
+
+    .button:focus-visible,
+    textarea:focus-visible,
+    input:focus-visible {
+      outline: 3px solid rgba(46, 101, 115, 0.28);
+      outline-offset: 2px;
+    }
+
+    .button.secondary {
+      color: var(--sea);
+      border-color: var(--line-strong);
+      background: var(--surface);
+    }
+
+    .button.secondary:hover {
+      background: #f8f0e4;
+    }
+
+    .recipe {
+      display: grid;
+      gap: 10px;
+    }
+
+    .companion-name {
+      width: 100%;
+      border: 2px solid var(--line-strong);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: var(--sea);
+      background: var(--surface);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .parts {
+      display: grid;
+      gap: 8px;
+    }
+
+    .part {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 2px solid rgba(200, 170, 130, 0.42);
+      padding: 8px 0;
+      font-size: 14px;
+    }
+
+    .part dt {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .part dd {
+      margin: 0;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 2px solid var(--amber-soft);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #735331;
+      background: #fff6e8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .prompt-card {
+      position: relative;
+    }
+
+    .prompt-guide {
+      display: none;
+    }
+
+    label {
+      color: var(--sea);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 176px;
+      resize: vertical;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      color: var(--ink);
+      background: rgba(255, 253, 248, 0.92);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .fixed textarea {
+      min-height: 216px;
+    }
+
+    .status {
+      min-height: 22px;
+      color: var(--focus);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .preview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding-top: 4px;
+    }
+
+    .view {
+      display: grid;
+      place-items: center;
+      min-height: 84px;
+      border: 2px dashed var(--line-strong);
+      border-radius: 8px;
+      color: var(--muted);
+      background:
+        linear-gradient(90deg, rgba(217, 209, 196, 0.22) 1px, transparent 1px),
+        linear-gradient(rgba(217, 209, 196, 0.22) 1px, transparent 1px),
+        rgba(255, 253, 248, 0.68);
+      background-size: 16px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    @media (min-width: 760px) {
+      .page {
+        padding: 48px 28px 64px;
+      }
+
+      .tool {
+        grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.1fr);
+        align-items: start;
+      }
+
+      .hero {
+        grid-template-columns: minmax(0, 1fr) 300px;
+      }
+
+      .hero-art {
+        min-height: 232px;
+      }
+
+      .hero-art img {
+        width: 270px;
+      }
+
+      .panel-inner {
+        padding: 24px;
+      }
+
+      .actions {
+        grid-template-columns: auto auto;
+        justify-content: start;
+      }
+
+      .prompt-guide {
+        display: block;
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        width: 94px;
+        opacity: 0.92;
+        filter: drop-shadow(0 14px 18px rgba(40, 31, 20, 0.14));
+        pointer-events: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="shell">
+      <header class="hero">
+        <div class="intro">
+          <p class="eyebrow">M.O.C.H.I. LABO / Promptmaker dev</p>
+          <h1>あなただけの相棒maker</h1>
+          <p class="lead">ランダムにできた言葉を、三面図用の固定プロンプトと合わせます。まずは小さく、コピーして画像生成へ渡せる形だけ。</p>
+        </div>
+        <figure class="hero-art" aria-hidden="true">
+          <img src="../assets/companion-mochi-main.png" alt="">
+        </figure>
+      </header>
+
+      <section class="tool" aria-label="相棒プロンプトメーカー">
+        <div class="panel decorated">
+          <div class="panel-inner">
+            <div class="panel-head">
+              <div>
+                <h2>1. 言葉で相棒をつくる</h2>
+                <p class="small">ベース、モチーフ、表情、小物を組み合わせます。</p>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="button" id="generateButton" type="button">ランダム生成</button>
+              <button class="button secondary" id="copyButton" type="button">完成プロンプトをコピー</button>
+            </div>
+
+            <div class="recipe" aria-live="polite">
+              <input class="companion-name" id="companionName" type="text" aria-label="相棒の名前">
+              <dl class="parts" id="partsList"></dl>
+              <div class="chips" id="chips"></div>
+            </div>
+
+            <div>
+              <p class="small">三面図の置き場</p>
+              <div class="preview" aria-hidden="true">
+                <div class="view">FRONT</div>
+                <div class="view">SIDE</div>
+                <div class="view">BACK</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel prompt-card">
+          <img class="prompt-guide" src="../assets/companion-mochi-pointer.png" alt="">
+          <div class="panel-inner">
+            <div class="field fixed">
+              <label for="fixedPrompt">固定プロンプト</label>
+              <textarea id="fixedPrompt">小さなオリジナルキャラクターの三面図。正面、横、後ろを1枚の設定資料として並べる。強めのデフォルメ。2頭身以下、丸い体、大きめの顔、短い手足。キャラクター本体は太めではっきりしたアウトラインで描く。シルエット、顔のパーツ、持ちものが小さく表示しても読み取りやすい。白に近い生成り背景、細い罫線、余白多め。静かな日本語キャラクター設定資料風。かわいいが騒がしくない。医療的、診断的、広告的な表現は避ける。キャラクターカードへ展開しやすいよう、形、色、持ちものが読み取りやすい構図。</textarea>
+            </div>
+
+            <div class="field">
+              <label for="generatedPrompt">完成プロンプト</label>
+              <textarea id="generatedPrompt" readonly></textarea>
+              <p class="status" id="status" role="status"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const WORDS = {
+      base: ["もち", "スライム", "しずく", "たまご", "こいし"],
+      motif: ["くま", "ねこ", "うさぎ", "くらげ", "ロボ"],
+      color: ["生成りホワイト", "深海ブルー", "淡い琥珀", "くすみミント", "やわらかいグレー"],
+      eyes: ["まる目", "ジト目", "ねむそうな目", "きらきら目"],
+      cheek: ["チークなし", "うすチーク", "まるチーク"],
+      mouth: ["ちいさい口", "にこ口", "むにゅ口"],
+      item: ["ぬいぐるみ", "ランタン", "ちいさな本", "マグカップ", "小さなかばん"],
+      accent: ["なし", "太い眉毛", "ちょびひげ", "丸メガネ", "小さい王冠", "ばんそうこう"],
+      personality: ["おっとり", "ねむい", "やさしい", "こわがり", "まじめ", "ぼんやり"]
+    };
+
+    const LABELS = {
+      base: "ベース",
+      motif: "モチーフ",
+      color: "色",
+      eyes: "目",
+      cheek: "チーク",
+      mouth: "口",
+      item: "アイテム",
+      accent: "アクセント",
+      personality: "性格"
+    };
+
+    const state = {};
+    const generateButton = document.querySelector("#generateButton");
+    const copyButton = document.querySelector("#copyButton");
+    const companionName = document.querySelector("#companionName");
+    const partsList = document.querySelector("#partsList");
+    const chips = document.querySelector("#chips");
+    const fixedPrompt = document.querySelector("#fixedPrompt");
+    const generatedPrompt = document.querySelector("#generatedPrompt");
+    const status = document.querySelector("#status");
+
+    generateButton.addEventListener("click", generateCompanion);
+    copyButton.addEventListener("click", copyPrompt);
+    fixedPrompt.addEventListener("input", updatePrompt);
+    companionName.addEventListener("input", updatePrompt);
+
+    generateCompanion();
+
+    function pick(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function generateCompanion() {
+      Object.keys(WORDS).forEach((key) => {
+        state[key] = pick(WORDS[key]);
+      });
+
+      companionName.value = makeName();
+      renderParts();
+      updatePrompt();
+      status.textContent = "新しい相棒の言葉を生成しました。";
+    }
+
+    function makeName() {
+      const accentPrefix = state.accent === "太い眉毛" ? "太眉" : "";
+      const eyePrefix = state.eyes.includes("ジト") ? "ジト目" : state.personality;
+      return `${accentPrefix || eyePrefix}${state.base}${state.motif}`;
+    }
+
+    function renderParts() {
+      partsList.innerHTML = Object.entries(LABELS).map(([key, label]) => `
+        <div class="part">
+          <dt>${label}</dt>
+          <dd>${state[key]}</dd>
+        </div>
+      `).join("");
+
+      chips.innerHTML = [state.base, state.motif, state.color, state.eyes, state.item, state.accent, state.personality]
+        .filter((word) => word !== "なし")
+        .map((word) => `<span class="chip">${word}</span>`)
+        .join("");
+    }
+
+    function updatePrompt() {
+      const name = companionName.value.trim() || makeName();
+      const accentLine = state.accent === "なし" ? "アクセントパーツは控えめ。" : `${state.accent}をアクセントとして入れる。`;
+      const characterPrompt = [
+        `キャラクター名: ${name}`,
+        `ベースは${state.base}。モチーフは${state.motif}。`,
+        `メインカラーは${state.color}。落ち着いた配色で、背景と分離して見えるようにする。`,
+        `${state.eyes}、${state.cheek}、${state.mouth}。${accentLine}`,
+        `いつも${state.item}を持っている。`,
+        `性格は${state.personality}。小さくそばにいる相棒の雰囲気。`,
+        "正面、横、後ろで形が破綻しないように、同じキャラクターとして統一する。"
+      ].join("\n");
+
+      generatedPrompt.value = `${characterPrompt}\n\n${fixedPrompt.value.trim()}`;
+    }
+
+    async function copyPrompt() {
+      updatePrompt();
+      try {
+        await navigator.clipboard.writeText(generatedPrompt.value);
+        status.textContent = "完成プロンプトをコピーしました。";
+      } catch (error) {
+        generatedPrompt.select();
+        document.execCommand("copy");
+        status.textContent = "完成プロンプトを選択してコピーしました。";
+      }
+    }
+  </script>
+</body>
+</html>
