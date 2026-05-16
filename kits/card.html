@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Character Card Kit</title>
+  <style>
+    :root{--paper:#f3eadc;--ink:#1f2528;--muted:#667174;--deep:#173946;--line:rgba(67,78,80,.16);--brown:#7a5c3e}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.8}main{width:min(100% - 28px,1080px);margin:0 auto;padding:34px 0 56px}header{display:grid;gap:12px;padding:20px 0 28px}h1{margin:0;color:var(--deep);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:clamp(2rem,8vw,3.5rem);line-height:1.2}p{margin:0;color:var(--muted)}a{color:var(--brown);font-weight:700}.grid{display:grid;gap:16px}.panel{border:1px solid var(--line);border-radius:22px;background:rgba(255,250,242,.88);padding:18px;box-shadow:0 14px 34px rgba(45,55,55,.08)}label{display:block;color:var(--deep);font-weight:800;margin-bottom:7px}textarea,input{width:100%;border:1px solid var(--line);border-radius:14px;background:#fffdf8;color:var(--ink);padding:12px 13px;font:inherit}textarea{min-height:130px;resize:vertical}.output{min-height:360px;font-family:"Hiragino Mincho ProN","Yu Mincho",serif;line-height:2}.row{display:grid;gap:10px;grid-template-columns:1fr}.actions{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:12px}button{min-height:48px;border:0;border-radius:999px;padding:10px 16px;font-weight:800;cursor:pointer}.primary{background:var(--deep);color:#fffaf2}.quiet{background:#eadac7;color:#4f3924}.status{min-height:1.5em;color:var(--brown);font-weight:800;font-size:.9rem}@media(min-width:820px){.grid{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <main>
+    <header><a href="../index.html">← Character Preset Maker に戻る</a><h1>Character Card Kit</h1><p>キャラJSONから、設定資料のようなキャラカードPromptを作ります。</p></header>
+    <div class="grid">
+      <section class="panel">
+        <label for="jsonInput">キャラJSON</label><textarea id="jsonInput" placeholder="キャラJSONを貼り付け"></textarea>
+        <div class="row"><div><label for="name">表示名</label><input id="name" value="灯 / Akari"></div><div><label for="note">メモ</label><input id="note" value="夜の匂いと、光のノイズ。"></div></div>
+        <label for="fields">カードに入れる欄</label><textarea id="fields">NAME / AGE / HEIGHT / NOTE / STYLE / PERSONALITY / MEMO</textarea>
+        <div class="actions"><button class="primary" id="generate">Prompt生成</button><button class="quiet" id="sample">サンプルJSON</button></div>
+      </section>
+      <section class="panel">
+        <label for="output">生成結果</label><textarea class="output" id="output" readonly></textarea>
+        <div class="actions"><button class="primary" id="copy">コピー</button><button class="quiet" id="clear">消す</button></div><p class="status" id="status"></p>
+      </section>
+    </div>
+  </main>
+  <script>
+    const sample={name:"灯 / Akari",visual_lock:{hair:"黒髪、長めの前髪",eyes:"静かな目",outfit:"黒いジャケット、チョーカー、厚底ブーツ"},world:{place:"雨の夜の都市",tone:"静か、観察者、青い光"}};
+    const $=id=>document.getElementById(id);function readJson(){try{return JSON.parse($("jsonInput").value||"{}")}catch{return {}}}function compact(o){return JSON.stringify(o,null,2).replace(/[{}"]/g,"").split("\n").map(s=>s.trim()).filter(Boolean).slice(0,24).join("\n")}
+    function generate(){const c=readJson();$("output").value=`キャラクターカード形式。\n日本語の編集デザイン。\n写真と設定欄を持つ、余白のある紙面。\n\n表示名。\n${$("name").value}\n\nキャラクター設定。\n${compact(c)||"キャラJSON未入力。静かなキャラクター。"}\n\nカード欄。\n${$("fields").value.trim()}\n\nレイアウト。\n左側に大きなキャラクター写真。\n右側に設定欄。\n下部にディテールカットを3枚。\n細い罫線、薄い紙の質感、落ち着いた余白。\n\nMEMO。\n${$("note").value}`;$("status").textContent=""}
+    async function copy(){$("output").select();document.execCommand("copy");$("status").textContent="コピーしました"}
+    $("generate").onclick=generate;$("copy").onclick=copy;$("clear").onclick=()=>$("output").value="";$("sample").onclick=()=>{$("jsonInput").value=JSON.stringify(sample,null,2);generate()};generate();
+  </script>
+</body>
+</html>

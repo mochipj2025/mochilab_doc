@@ -1,0 +1,1956 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Image2.0向けの自然なキャラクターシーンPromptを作る、日本語UIの創作ノート型Webアプリです。">
+  <title>Character Scene Prompt Maker</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f3eadc;
+      --paper-soft: #faf5ec;
+      --card: rgba(255, 251, 244, 0.88);
+      --card-strong: #fffaf2;
+      --ink: #1f2528;
+      --muted: #5e6567;
+      --deep: #173946;
+      --deep-soft: #dce8e8;
+      --brown: #7a5c3e;
+      --brown-soft: #eadac7;
+      --line: rgba(67, 78, 80, 0.16);
+      --shadow: 0 20px 54px rgba(45, 55, 55, 0.12);
+      --shadow-soft: 0 12px 30px rgba(45, 55, 55, 0.08);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --content: 1160px;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif JP", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0) 300px),
+        radial-gradient(circle at 12% 4%, rgba(212, 193, 166, 0.42), transparent 30%),
+        radial-gradient(circle at 92% 0%, rgba(35, 75, 88, 0.12), transparent 34%),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.8;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .page {
+      width: min(100% - 28px, var(--content));
+      margin: 0 auto;
+      padding: 26px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      padding: 30px 0 28px;
+    }
+
+    .studio-bar {
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+      display: grid;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 14px;
+      border: 1px solid rgba(67, 78, 80, 0.14);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 242, 0.92);
+      box-shadow: 0 16px 40px rgba(45, 55, 55, 0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    .studio-status {
+      display: grid;
+      gap: 4px;
+    }
+
+    .status-main {
+      color: var(--deep);
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .status-sub {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    .quick-actions,
+    .preset-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-actions {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .preset-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 8px;
+    }
+
+    .preset-note {
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--brown);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-family: var(--serif);
+      font-size: clamp(2.08rem, 8vw, 4.1rem);
+      font-weight: 600;
+      line-height: 1.24;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.8vw, 1.08rem);
+    }
+
+    .kit-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+      max-width: 760px;
+    }
+
+    .kit-link {
+      display: grid;
+      gap: 4px;
+      min-height: 76px;
+      padding: 13px 14px;
+      border: 1px solid rgba(67, 78, 80, 0.14);
+      border-radius: 16px;
+      background: rgba(255, 251, 244, 0.74);
+      color: inherit;
+      text-decoration: none;
+      box-shadow: 0 10px 24px rgba(45, 55, 55, 0.07);
+    }
+
+    .kit-link strong {
+      color: var(--deep);
+      font-size: 0.94rem;
+      line-height: 1.4;
+    }
+
+    .kit-link span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.55;
+    }
+
+    .app {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .form-panel {
+      padding: clamp(18px, 4vw, 30px);
+    }
+
+    .result-panel {
+      align-self: start;
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .section-head {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 15px;
+    }
+
+    details.section {
+      display: block;
+    }
+
+    details.section > summary {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    details.section > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .summary-text {
+      display: grid;
+      gap: 6px;
+    }
+
+    .summary-marker {
+      display: inline-flex;
+      width: 30px;
+      height: 30px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(67, 78, 80, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.58);
+      color: var(--deep);
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: transform 160ms ease;
+    }
+
+    details[open] .summary-marker {
+      transform: rotate(45deg);
+    }
+
+    .section-body {
+      padding-top: 15px;
+    }
+
+    .section-title {
+      color: var(--deep);
+      font-family: var(--serif);
+      font-size: 1.18rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .section-note {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+
+    .checks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .category-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .category {
+      padding: 12px;
+      border: 1px solid rgba(67, 78, 80, 0.13);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.36);
+    }
+
+    .category-title {
+      margin: 0 0 9px;
+      color: var(--brown);
+      font-size: 0.84rem;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .category .checks {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .category .choice {
+      min-height: 42px;
+    }
+
+    .category .choice span {
+      font-size: 0.9rem;
+    }
+
+    .choice {
+      position: relative;
+      display: flex;
+      min-height: 46px;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 12px;
+      border: 1px solid rgba(67, 78, 80, 0.14);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.54);
+      color: #30383a;
+      transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .choice input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--deep);
+      flex: 0 0 auto;
+    }
+
+    .choice span {
+      font-size: 0.94rem;
+      line-height: 1.45;
+    }
+
+    .choice:has(input:checked) {
+      border-color: rgba(23, 57, 70, 0.38);
+      background: rgba(220, 232, 232, 0.74);
+      box-shadow: 0 8px 18px rgba(23, 57, 70, 0.08);
+    }
+
+    .text-field {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    label.field-label {
+      color: var(--deep);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(67, 78, 80, 0.18);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--ink);
+      outline: 0;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+      transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    }
+
+    input[type="text"] {
+      min-height: 48px;
+      padding: 12px 14px;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+      padding: 13px 14px;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: rgba(23, 57, 70, 0.46);
+      background: #fffdf8;
+      box-shadow: 0 0 0 4px rgba(23, 57, 70, 0.08);
+    }
+
+    .select-wrap {
+      display: grid;
+      gap: 10px;
+    }
+
+    .background-select {
+      width: 100%;
+      min-height: 50px;
+      padding: 0 14px;
+      border: 1px solid rgba(67, 78, 80, 0.18);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--ink);
+      outline: 0;
+    }
+
+    .radio-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .photo-options {
+      display: none;
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid rgba(23, 57, 70, 0.15);
+      border-radius: 18px;
+      background: rgba(220, 232, 232, 0.46);
+    }
+
+    .photo-options.is-visible {
+      display: block;
+    }
+
+    .photo-options .checks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      padding-top: 8px;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 50px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      line-height: 1.35;
+      white-space: normal;
+      transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+    }
+
+    .btn-small {
+      min-height: 42px;
+      padding: 9px 14px;
+      font-size: 0.9rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:focus-visible,
+    .choice:has(input:focus-visible),
+    .background-select:focus-visible {
+      outline: 3px solid rgba(23, 57, 70, 0.18);
+      outline-offset: 3px;
+    }
+
+    .btn-primary {
+      background: var(--deep);
+      color: #fffaf2;
+      box-shadow: 0 14px 32px rgba(23, 57, 70, 0.22);
+    }
+
+    .btn-secondary {
+      border-color: rgba(122, 92, 62, 0.24);
+      background: var(--brown-soft);
+      color: #4f3924;
+    }
+
+    .btn-quiet {
+      border-color: rgba(67, 78, 80, 0.14);
+      background: rgba(255, 255, 255, 0.55);
+      color: #384245;
+    }
+
+    .result-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 18px 0;
+    }
+
+    .result-title {
+      color: var(--deep);
+      font-family: var(--serif);
+      font-size: 1.18rem;
+      font-weight: 600;
+    }
+
+    .copy-status {
+      min-height: 1.5em;
+      color: var(--brown);
+      font-size: 0.86rem;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .result-card {
+      margin: 16px;
+      padding: clamp(18px, 4vw, 26px);
+      border: 1px solid rgba(67, 78, 80, 0.14);
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 250, 242, 0.92)),
+        var(--card-strong);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .prompt-output {
+      display: block;
+      width: 100%;
+      min-height: 360px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      white-space: pre-wrap;
+      color: #222b2d;
+      font-family: var(--serif);
+      font-size: clamp(1rem, 3.4vw, 1.08rem);
+      line-height: 2;
+      word-break: break-word;
+      resize: vertical;
+      outline: 0;
+    }
+
+    .result-actions {
+      display: grid;
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    @media (min-width: 720px) {
+      .page {
+        width: min(100% - 48px, var(--content));
+        padding-top: 42px;
+      }
+
+      .hero {
+        padding: 44px 0 38px;
+      }
+
+      .app {
+        grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+        align-items: start;
+        gap: 22px;
+      }
+
+      .studio-bar {
+        grid-template-columns: minmax(240px, 1fr) minmax(380px, 1.25fr);
+        align-items: center;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+
+      .preset-row {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .checks {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .radio-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .button-row {
+        grid-template-columns: 1.15fr 1fr 1fr;
+      }
+
+      .result-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .result-panel {
+        position: sticky;
+        top: 164px;
+      }
+    }
+
+    @media (min-width: 1040px) {
+      .checks {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 420px) {
+      .page {
+        width: min(100% - 22px, var(--content));
+      }
+
+      .checks,
+      .category-grid,
+      .kit-links,
+      .photo-options .checks {
+        grid-template-columns: 1fr;
+      }
+
+      .form-panel {
+        padding: 16px;
+      }
+
+      .choice {
+        min-height: 44px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Image2.0 character note</p>
+      <h1>Character Scene Prompt Maker</h1>
+      <p class="lead">表情、髪、目、衣装、動き、背景、短い詩を選んで、Image2.0向けの自然なキャラクターシーンPromptを作ります。</p>
+      <nav class="kit-links" aria-label="制作キット">
+        <a class="kit-link" href="./kits/photobook.html"><strong>Photo Book Kit</strong><span>写真集風ページを作る</span></a>
+        <a class="kit-link" href="./kits/manga.html"><strong>Manga Scene Kit</strong><span>縦スクロール漫画を作る</span></a>
+        <a class="kit-link" href="./kits/card.html"><strong>Character Card Kit</strong><span>キャラカードを作る</span></a>
+        <a class="kit-link" href="./kits/three-view.html"><strong>Three View Kit</strong><span>三面図を作る</span></a>
+      </nav>
+    </header>
+
+    <section class="studio-bar" aria-label="すぐ使う操作">
+      <div class="studio-status">
+        <p class="status-main" id="statusMain">選ぶだけでPromptが育ちます。</p>
+        <p class="status-sub" id="statusSub">まずはランダム生成、または気になる項目をひとつ選んでください。</p>
+      </div>
+      <div>
+        <div class="quick-actions">
+          <button class="btn btn-primary btn-small" type="button" data-action="generate">生成</button>
+          <button class="btn btn-secondary btn-small" type="button" data-action="random">おまかせ</button>
+          <button class="btn btn-quiet btn-small" type="button" data-action="copy">コピー</button>
+          <button class="btn btn-quiet btn-small" type="button" data-action="result">結果へ</button>
+        </div>
+        <div class="preset-row" aria-label="プリセット">
+          <button class="btn btn-quiet btn-small" type="button" data-preset="quiet">静かな朝</button>
+          <button class="btn btn-quiet btn-small" type="button" data-preset="cyber">近未来</button>
+          <button class="btn btn-quiet btn-small" type="button" data-preset="steam">工房</button>
+          <button class="btn btn-quiet btn-small" type="button" data-preset="sea">深海</button>
+          <button class="btn btn-quiet btn-small" type="button" data-preset="photo">写真寄り</button>
+        </div>
+        <p class="preset-note">プリセットはあとから自由に足したり消したりできます。</p>
+      </div>
+    </section>
+
+    <div class="app">
+      <form class="panel form-panel" id="promptForm">
+        <details class="section" aria-labelledby="expression-title" open>
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="expression-title">1. 表情・口元</h2>
+              <p class="section-note">目とは別に、顔全体の空気や口元の印象を選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="checks" id="expressionChecks"></div>
+          <div class="text-field">
+            <label class="field-label" for="expressionFree">自由入力</label>
+            <textarea id="expressionFree" placeholder="例：少し気だるそうな表情、言葉少なな口元"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="accessories-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="accessories-title">2. アクセサリー</h2>
+              <p class="section-note">顔や頭まわりの装備、小物を選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="checks" id="accessoryChecks"></div>
+          <div class="text-field">
+            <label class="field-label" for="accessoryFree">自由入力</label>
+            <textarea id="accessoryFree" placeholder="例：ゴーグル付きヘッドホン、小さな銀のピアス"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="personality-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="personality-title">3. 性格・趣味</h2>
+              <p class="section-note">キャラの内側や好きなものを選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="checks" id="personalityChecks"></div>
+          <div class="text-field">
+            <label class="field-label" for="personalityFree">自由入力</label>
+            <textarea id="personalityFree" placeholder="例：蒸気機関技師の少女、夜にだけ音楽を作る人"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="world-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="world-title">4. 世界観属性</h2>
+              <p class="section-note">キャラが属している世界の雰囲気を選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="checks" id="worldChecks"></div>
+          <div class="text-field">
+            <label class="field-label" for="worldFree">自由入力</label>
+            <textarea id="worldFree" placeholder="例：真鍮と蒸気の世界、深海研究室の住人"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="proportion-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="proportion-title">5. 頭身</h2>
+              <p class="section-note">キャラの見た目年齢ではなく、絵のバランスだけを選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="checks" id="proportionChecks"></div>
+          <div class="text-field">
+            <label class="field-label" for="proportionFree">自由入力</label>
+            <textarea id="proportionFree" placeholder="例：少しデフォルメされたバランス、すらっとした全身"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="hair-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="hair-title">6. 髪</h2>
+              <p class="section-note">前髪と髪型を分けて選べます。髪色などは自由入力で足せます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="category-grid" id="hairGroups"></div>
+          <div class="text-field">
+            <label class="field-label" for="hairFree">自由入力</label>
+            <textarea id="hairFree" placeholder="例：白髪、青髪、毛先だけ淡い水色"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="eyes-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="eyes-title">7. 目</h2>
+              <p class="section-note">目の形と色を分けて選べます。視線やまつげは自由入力で足せます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="category-grid" id="eyeGroups"></div>
+          <div class="text-field">
+            <label class="field-label" for="eyeFree">自由入力</label>
+            <textarea id="eyeFree" placeholder="例：こちらを静かに見ている、長いまつげ"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="outfits-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="outfits-title">8. 衣装</h2>
+              <p class="section-note">服装だけをカテゴリごとに選べます。顔や性格と混ざりすぎないように出力します。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="category-grid" id="outfitGroups"></div>
+          <div class="text-field">
+            <label class="field-label" for="outfitFree">自由入力</label>
+            <textarea id="outfitFree" placeholder="例：工具だらけのベルト、少し大きめの白いシャツ"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="verbs-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="verbs-title">9. 動詞</h2>
+              <p class="section-note">キャラが何をしているかを選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="checks" id="verbChecks"></div>
+          <div class="text-field">
+            <label class="field-label" for="verbFree">自由入力</label>
+            <textarea id="verbFree" placeholder="例：レンチを片手に、振り向きながら歩いている"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="background-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="background-title">10. 背景</h2>
+              <p class="section-note">場所や空気感を選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="select-wrap">
+            <select class="background-select" id="backgroundSelect" aria-label="背景を選ぶ"></select>
+            <div class="text-field">
+              <label class="field-label" for="backgroundFree">自由入力</label>
+              <textarea id="backgroundFree" placeholder="例：真鍮と蒸気に包まれた工房、雨の夜"></textarea>
+            </div>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="poem-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="poem-title">11. 詩</h2>
+              <p class="section-note">短い一文を入れると、Promptの余韻になります。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="text-field" style="margin-top: 0;">
+            <label class="field-label" for="poemInput">短い一文</label>
+            <textarea id="poemInput" placeholder="例：雨音だけが、今日の気持ちを知っていた。"></textarea>
+          </div>
+          <div class="actions">
+            <button class="btn btn-quiet" type="button" id="randomPoemButton">詩だけランダム生成</button>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="style-title" open>
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="style-title">12. 画風</h2>
+              <p class="section-note">イラスト系とフォトリアル系を選べます。品質呪文は使いません。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="radio-grid" id="styleRadios"></div>
+          <div class="photo-options" id="photoOptions" aria-live="polite">
+            <div class="section-head">
+              <h3 class="section-title">フォトリアル追加オプション</h3>
+              <p class="section-note">フォトリアル系を選んだ時だけ、背景描写のあとに自然に追加します。</p>
+            </div>
+            <div class="checks" id="photoChecks"></div>
+          </div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="output-type-title" open>
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="output-type-title">13. 出力タイプ</h2>
+              <p class="section-note">キャラを何として出すかを選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="radio-grid" id="outputTypeRadios"></div>
+          </div>
+        </details>
+
+        <details class="section" aria-labelledby="framing-title" open>
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="framing-title">14. 映す場所</h2>
+              <p class="section-note">正面、横、バストアップなど、キャラをどこまで映すかを選びます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+          <div class="radio-grid" id="framingRadios"></div>
+          <div class="text-field">
+            <label class="field-label" for="framingFree">自由入力</label>
+            <textarea id="framingFree" placeholder="例：少し斜め上から、余白を広めにとる"></textarea>
+          </div>
+          </div>
+        </details>
+
+        <section class="section actions" aria-label="操作">
+          <div class="button-row">
+            <button class="btn btn-primary" type="button" id="generateButton">Prompt生成</button>
+            <button class="btn btn-secondary" type="button" id="randomButton">ランダム生成</button>
+            <button class="btn btn-quiet" type="button" id="resetButton">入力リセット</button>
+          </div>
+        </section>
+      </form>
+
+      <aside class="panel result-panel" aria-labelledby="result-title">
+        <div class="result-head">
+          <h2 class="result-title" id="result-title">生成結果</h2>
+          <p class="copy-status" id="copyStatus" aria-live="polite"></p>
+        </div>
+        <div class="result-card">
+          <textarea class="prompt-output" id="promptOutput" readonly aria-label="生成されたPrompt"></textarea>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary" type="button" id="copyButton">Promptコピー</button>
+          <button class="btn btn-quiet" type="button" id="clearOutputButton">結果を空にする</button>
+        </div>
+      </aside>
+    </div>
+
+    <p class="footer-note">短く、空気感が伝わる言葉だけで作る Image2.0 向けのPromptメーカーです。</p>
+  </main>
+
+  <script>
+    const expressions = [
+      "静かな表情",
+      "クールな表情",
+      "眠そうな表情",
+      "少し気だるそうな表情",
+      "やさしい表情",
+      "無表情",
+      "小さく笑っている",
+      "八重歯が少し見える"
+    ];
+
+    const accessories = [
+      "ヘッドホン",
+      "ゴーグル",
+      "眼帯",
+      "丸い眼鏡",
+      "小さなピアス",
+      "リボン",
+      "チョーカー",
+      "古い鍵のペンダント"
+    ];
+
+    const personalities = [
+      "本好き",
+      "音楽好き",
+      "機械いじりが好き",
+      "静かな性格",
+      "観察が好き",
+      "ひとりの時間が好き",
+      "旅が好き",
+      "夜更かし気味"
+    ];
+
+    const worlds = [
+      "サイバー系",
+      "スチームパンク系",
+      "北欧系",
+      "深海系",
+      "図書館系",
+      "雨の街系",
+      "研究室系",
+      "古いアパート系"
+    ];
+
+    const proportions = [
+      "2頭身のデフォルメ",
+      "3頭身のかわいいバランス",
+      "4頭身の小柄なバランス",
+      "5頭身のやわらかいバランス",
+      "6頭身の自然なキャラクターバランス",
+      "7頭身のすらっとしたバランス",
+      "8頭身の大人っぽいバランス",
+      "上半身中心で頭身を強調しない"
+    ];
+
+    const hairGroups = {
+      "前髪": [
+        "ぱっつん前髪",
+        "斜め前髪",
+        "長めの前髪",
+        "センター分け",
+        "目にかかる前髪",
+        "前髪なし"
+      ],
+      "髪型": [
+        "ポニーテール",
+        "ショートボブ",
+        "ロングヘア",
+        "ミディアムヘア",
+        "ツインテール",
+        "三つ編み",
+        "ゆるいウェーブ",
+        "お団子ヘア"
+      ]
+    };
+
+    const eyeGroups = {
+      "目の形": [
+        "大きな目",
+        "切れ長の目",
+        "眠そうな目",
+        "ジト目",
+        "たれ目",
+        "つり目",
+        "静かな目",
+        "少し伏せた目"
+      ],
+      "目の色": [
+        "赤い目",
+        "紫の目",
+        "青い目",
+        "金色の目",
+        "緑の目",
+        "灰色の目",
+        "琥珀色の目",
+        "深い黒い目"
+      ]
+    };
+
+    const verbs = [
+      "見つめている",
+      "振り向いている",
+      "歩いている",
+      "座っている",
+      "本を読んでいる",
+      "刀を構えている",
+      "ギターを抱えている",
+      "コーヒーを飲んでいる",
+      "雨を見上げている",
+      "風になびいている"
+    ];
+
+    const outfitGroups = {
+      "制服・学生": [
+        "セーラー服",
+        "ブレザー制服",
+        "白いシャツ",
+        "プリーツスカート",
+        "スクールカーディガン"
+      ],
+      "日常・カジュアル": [
+        "ゆったりしたニット",
+        "ロングコート",
+        "パーカー",
+        "ワイドパンツ",
+        "シンプルなワンピース"
+      ],
+      "職業・道具": [
+        "作業用エプロン",
+        "研究員の白衣",
+        "バリスタ風の服",
+        "整備士のつなぎ",
+        "旅人のマント"
+      ],
+      "ファンタジー": [
+        "魔法使いのローブ",
+        "騎士風の軽装",
+        "巫女風の衣装",
+        "森の旅装",
+        "星飾りのケープ"
+      ],
+      "ストリート・近未来": [
+        "オーバーサイズジャケット",
+        "テックウェア",
+        "サイバーコート",
+        "ネオンのラインが入った服",
+        "厚底ブーツ"
+      ],
+      "質感・季節": [
+        "雨に濡れたコート",
+        "リネンの服",
+        "古い革のベルト",
+        "冬のマフラー",
+        "薄手の黒い手袋"
+      ]
+    };
+
+    const backgrounds = [
+      "雨の夜の街",
+      "深海のような部屋",
+      "北欧風カフェ",
+      "スチームパンクの工房",
+      "静かな図書館",
+      "夜明け前の駅",
+      "古いアパート",
+      "サイバー都市",
+      "海辺のバス停"
+    ];
+
+    const poems = [
+      "雨音だけが、今日の気持ちを知っていた。",
+      "機械の音だけが、まだ眠るなと言っていた。",
+      "深海みたいに静かな朝だった。",
+      "誰もいない夜に、音楽だけが残っていた。",
+      "言葉にできない日だった。",
+      "風はいつも、遠いどこかへ運んでいく。",
+      "まだ世界が起ききっていない朝だった。",
+      "小さな光だけが、帰り道を覚えていた。"
+    ];
+
+    const styles = [
+      "日本のアニメ調イラスト",
+      "日本の漫画調イラスト",
+      "水彩イラスト",
+      "色鉛筆画",
+      "セミリアルイラスト",
+      "油絵風イラスト",
+      "線画イラスト",
+      "フォトリアル",
+      "リアルRAW",
+      "シネマティックフォト",
+      "自然光フォト",
+      "ドキュメンタリー写真風"
+    ];
+
+    const outputTypes = [
+      {
+        label: "1枚絵",
+        prompt: [
+          "1枚絵。",
+          "キャラクターと背景をひとつの場面として描く。",
+          "余白のある静かな構図。"
+        ]
+      },
+      {
+        label: "キャラカード化",
+        prompt: [
+          "キャラクターカード形式。",
+          "正面の立ち姿を中心に、余白のある整理されたレイアウト。",
+          "小さな設定メモ欄のような静かな情報整理。"
+        ]
+      },
+      {
+        label: "三面図",
+        prompt: [
+          "キャラクター三面図。",
+          "正面、横、背面を並べた設定資料風の構成。",
+          "衣装と髪型の形がわかる清潔なレイアウト。"
+        ]
+      },
+      {
+        label: "縦スクロール漫画",
+        prompt: [
+          "縦スクロール漫画形式。",
+          "静かな連続シーンとして、上から下へ自然に流れる構成。",
+          "吹き出しを使わず、表情と空気感で物語を伝える。"
+        ]
+      }
+    ];
+
+    const framings = [
+      "正面から映す",
+      "横から映す",
+      "斜め前から映す",
+      "バストアップ",
+      "上半身",
+      "膝上まで",
+      "全身",
+      "顔のアップ",
+      "少し引きの構図",
+      "三面図向けに正面・横・背面を並べる"
+    ];
+
+    const photoStyles = [
+      "フォトリアル",
+      "リアルRAW",
+      "シネマティックフォト",
+      "自然光フォト",
+      "ドキュメンタリー写真風"
+    ];
+
+    const photoExtras = [
+      "自然光",
+      "逆光",
+      "雨",
+      "フィルム写真風",
+      "シネマティック",
+      "RAW写真",
+      "被写界深度",
+      "静かな夜",
+      "暖色照明",
+      "青いネオン"
+    ];
+
+    const defaults = {
+      proportion: ["6頭身の自然なキャラクターバランス"],
+      hair: ["ショートボブ", "長めの前髪"],
+      eyes: ["静かな目", "深い黒い目"],
+      expression: ["静かな表情"],
+      accessory: ["ヘッドホン"],
+      personality: ["本好き"],
+      world: ["深海系"],
+      outfit: ["ゆったりしたニット"],
+      verb: ["見つめている"],
+      background: "深海のような部屋",
+      poem: "深海みたいに静かな朝だった。",
+      style: "日本の漫画調イラスト",
+      outputType: "1枚絵",
+      framing: "上半身"
+    };
+
+    const presets = {
+      quiet: {
+        proportion: ["5頭身のやわらかいバランス"],
+        hair: ["ショートボブ", "長めの前髪"],
+        hairFree: "",
+        eyes: ["静かな目", "琥珀色の目"],
+        eyeFree: "",
+        expressions: ["静かな表情"],
+        accessories: [],
+        personalities: ["本好き"],
+        worlds: ["図書館系"],
+        outfits: ["ゆったりしたニット", "冬のマフラー"],
+        verbs: ["本を読んでいる", "座っている"],
+        background: "静かな図書館",
+        poem: "まだ世界が起ききっていない朝だった。",
+        style: "日本の漫画調イラスト",
+        outputType: "1枚絵",
+        framing: "バストアップ",
+        extras: []
+      },
+      cyber: {
+        proportion: ["7頭身のすらっとしたバランス"],
+        hair: ["センター分け", "ミディアムヘア"],
+        hairFree: "青髪",
+        eyes: ["切れ長の目", "紫の目"],
+        eyeFree: "",
+        expressions: ["クールな表情"],
+        accessories: ["ヘッドホン"],
+        personalities: ["音楽好き"],
+        worlds: ["サイバー系"],
+        outfits: ["テックウェア", "ネオンのラインが入った服"],
+        verbs: ["見つめている", "歩いている"],
+        background: "サイバー都市",
+        poem: "誰もいない夜に、音楽だけが残っていた。",
+        style: "日本のアニメ調イラスト",
+        outputType: "キャラカード化",
+        framing: "全身",
+        extras: []
+      },
+      steam: {
+        proportion: ["6頭身の自然なキャラクターバランス"],
+        hair: ["ポニーテール", "斜め前髪"],
+        hairFree: "",
+        eyes: ["つり目", "金色の目"],
+        eyeFree: "",
+        expressions: ["クールな表情"],
+        accessories: ["ゴーグル"],
+        personalities: ["機械いじりが好き"],
+        worlds: ["スチームパンク系"],
+        outfits: ["整備士のつなぎ", "古い革のベルト"],
+        verbs: ["振り向いている", "歩いている"],
+        background: "スチームパンクの工房",
+        poem: "機械の音だけが、まだ眠るなと言っていた。",
+        style: "日本の漫画調イラスト",
+        outputType: "三面図",
+        framing: "三面図向けに正面・横・背面を並べる",
+        extras: []
+      },
+      sea: {
+        proportion: ["6頭身の自然なキャラクターバランス"],
+        hair: ["ロングヘア", "目にかかる前髪"],
+        hairFree: "白髪、毛先だけ淡い青",
+        eyes: ["少し伏せた目", "青い目"],
+        eyeFree: "",
+        expressions: ["静かな表情"],
+        accessories: [],
+        personalities: ["ひとりの時間が好き"],
+        worlds: ["深海系"],
+        outfits: ["シンプルなワンピース", "薄手の黒い手袋"],
+        verbs: ["見つめている"],
+        background: "深海のような部屋",
+        poem: "深海みたいに静かな朝だった。",
+        style: "水彩イラスト",
+        outputType: "1枚絵",
+        framing: "上半身",
+        extras: []
+      },
+      photo: {
+        proportion: ["7頭身のすらっとしたバランス"],
+        hair: ["ショートボブ", "前髪なし"],
+        hairFree: "銀色に近い白髪",
+        eyes: ["静かな目", "灰色の目"],
+        eyeFree: "こちらを静かに見ている",
+        expressions: ["静かな表情"],
+        accessories: ["ヘッドホン"],
+        personalities: ["観察が好き"],
+        worlds: ["古いアパート系"],
+        outfits: ["白いシャツ", "ロングコート"],
+        verbs: ["座っている"],
+        background: "古いアパート",
+        poem: "言葉にできない日だった。",
+        style: "フォトリアル",
+        outputType: "キャラカード化",
+        framing: "バストアップ",
+        extras: ["自然光", "被写界深度", "フィルム写真風"]
+      }
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+
+    const elements = {
+      expressionChecks: $("#expressionChecks"),
+      accessoryChecks: $("#accessoryChecks"),
+      personalityChecks: $("#personalityChecks"),
+      worldChecks: $("#worldChecks"),
+      proportionChecks: $("#proportionChecks"),
+      hairGroups: $("#hairGroups"),
+      eyeGroups: $("#eyeGroups"),
+      outfitGroups: $("#outfitGroups"),
+      verbChecks: $("#verbChecks"),
+      backgroundSelect: $("#backgroundSelect"),
+      styleRadios: $("#styleRadios"),
+      outputTypeRadios: $("#outputTypeRadios"),
+      framingRadios: $("#framingRadios"),
+      photoChecks: $("#photoChecks"),
+      photoOptions: $("#photoOptions"),
+      expressionFree: $("#expressionFree"),
+      accessoryFree: $("#accessoryFree"),
+      personalityFree: $("#personalityFree"),
+      worldFree: $("#worldFree"),
+      proportionFree: $("#proportionFree"),
+      hairFree: $("#hairFree"),
+      eyeFree: $("#eyeFree"),
+      outfitFree: $("#outfitFree"),
+      verbFree: $("#verbFree"),
+      backgroundFree: $("#backgroundFree"),
+      framingFree: $("#framingFree"),
+      poemInput: $("#poemInput"),
+      promptOutput: $("#promptOutput"),
+      copyStatus: $("#copyStatus"),
+      statusMain: $("#statusMain"),
+      statusSub: $("#statusSub")
+    };
+
+    function createCheckList(container, items, name) {
+      container.innerHTML = items.map((item) => `
+        <label class="choice">
+          <input type="checkbox" name="${name}" value="${item}">
+          <span>${item}</span>
+        </label>
+      `).join("");
+    }
+
+    function createRadioList(container, items, name, defaultValue) {
+      container.innerHTML = items.map((item) => `
+        <label class="choice">
+          <input type="radio" name="${name}" value="${item}" ${item === defaultValue ? "checked" : ""}>
+          <span>${item}</span>
+        </label>
+      `).join("");
+    }
+
+    function createCheckGroups(container, groups, name) {
+      container.innerHTML = Object.entries(groups).map(([title, items]) => `
+        <section class="category" aria-label="${title}">
+          <h3 class="category-title">${title}</h3>
+          <div class="checks">
+            ${items.map((item) => `
+              <label class="choice">
+                <input type="checkbox" name="${name}" value="${item}">
+                <span>${item}</span>
+              </label>
+            `).join("")}
+          </div>
+        </section>
+      `).join("");
+    }
+
+    function createStyleRadios() {
+      elements.styleRadios.innerHTML = styles.map((style, index) => `
+        <label class="choice">
+          <input type="radio" name="style" value="${style}" ${index === 1 ? "checked" : ""}>
+          <span>${style}</span>
+        </label>
+      `).join("");
+    }
+
+    function createOutputTypeRadios() {
+      elements.outputTypeRadios.innerHTML = outputTypes.map((type) => `
+        <label class="choice">
+          <input type="radio" name="outputType" value="${type.label}" ${type.label === defaults.outputType ? "checked" : ""}>
+          <span>${type.label}</span>
+        </label>
+      `).join("");
+    }
+
+    function createFramingRadios() {
+      createRadioList(elements.framingRadios, framings, "framing", defaults.framing);
+    }
+
+    function createBackgroundOptions() {
+      elements.backgroundSelect.innerHTML = [
+        '<option value="">背景を選ぶ</option>',
+        ...backgrounds.map((background) => `<option value="${background}">${background}</option>`)
+      ].join("");
+    }
+
+    function selectedValues(name) {
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map((input) => input.value);
+    }
+
+    function selectedValue(name) {
+      return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+    }
+
+    function selectedStyle() {
+      return document.querySelector('input[name="style"]:checked')?.value || defaults.style;
+    }
+
+    function selectedOutputType() {
+      return document.querySelector('input[name="outputType"]:checked')?.value || defaults.outputType;
+    }
+
+    function selectedFraming() {
+      return document.querySelector('input[name="framing"]:checked')?.value || defaults.framing;
+    }
+
+    function outputTypePrompt(label) {
+      return outputTypes.find((type) => type.label === label)?.prompt || outputTypes[0].prompt;
+    }
+
+    function isPhotoStyle(style) {
+      return photoStyles.includes(style);
+    }
+
+    function splitFreeText(text) {
+      return text
+        .split(/\n|、|,/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function sentence(text) {
+      const trimmed = text.trim();
+      if (!trimmed) return "";
+      return /[。！？.!?]$/.test(trimmed) ? trimmed : `${trimmed}。`;
+    }
+
+    function lineBlock(items) {
+      return items.map(sentence).filter(Boolean).join("\n");
+    }
+
+    function naturalActionBlock(items) {
+      if (!items.length) return lineBlock(["静かに佇んでいる"]);
+      if (items.length === 1) return lineBlock(items);
+      const firstItems = items.slice(0, -1).map(sentence);
+      const last = sentence(items[items.length - 1]);
+      return [...firstItems, last].join("\n");
+    }
+
+    function getPromptParts() {
+      const style = selectedStyle();
+      const outputType = selectedOutputType();
+      const framingItems = [
+        selectedFraming(),
+        ...splitFreeText(elements.framingFree.value)
+      ].filter(Boolean);
+      const proportionItems = [
+        selectedValue("proportion"),
+        ...splitFreeText(elements.proportionFree.value)
+      ].filter(Boolean);
+      const hairItems = [
+        ...selectedValues("hair"),
+        ...splitFreeText(elements.hairFree.value)
+      ];
+      const eyeItems = [
+        ...selectedValues("eye"),
+        ...splitFreeText(elements.eyeFree.value)
+      ];
+      const expressionItems = [
+        ...selectedValues("expression"),
+        ...splitFreeText(elements.expressionFree.value)
+      ];
+      const accessoryItems = [
+        ...selectedValues("accessory"),
+        ...splitFreeText(elements.accessoryFree.value)
+      ];
+      const personalityItems = [
+        ...selectedValues("personality"),
+        ...splitFreeText(elements.personalityFree.value)
+      ];
+      const worldItems = [
+        ...selectedValues("world"),
+        ...splitFreeText(elements.worldFree.value)
+      ];
+      const outfitItems = [
+        ...selectedValues("outfit"),
+        ...splitFreeText(elements.outfitFree.value)
+      ];
+      const verbItems = [
+        ...selectedValues("verb"),
+        ...splitFreeText(elements.verbFree.value)
+      ];
+      const backgroundItems = [
+        elements.backgroundSelect.value,
+        ...splitFreeText(elements.backgroundFree.value)
+      ].filter(Boolean);
+      const extraItems = isPhotoStyle(style) ? selectedValues("photoExtra") : [];
+      const poem = elements.poemInput.value.trim() || defaults.poem;
+
+      return {
+        outputType,
+        style,
+        framings: framingItems.length ? framingItems : [defaults.framing],
+        proportions: proportionItems.length ? proportionItems : defaults.proportion,
+        hair: hairItems.length ? hairItems : defaults.hair,
+        eyes: eyeItems.length ? eyeItems : defaults.eyes,
+        expressions: expressionItems.length ? expressionItems : defaults.expression,
+        accessories: accessoryItems.length ? accessoryItems : defaults.accessory,
+        personalities: personalityItems.length ? personalityItems : defaults.personality,
+        worlds: worldItems.length ? worldItems : defaults.world,
+        outfits: outfitItems.length ? outfitItems : defaults.outfit,
+        verbs: verbItems.length ? verbItems : defaults.verb,
+        backgrounds: backgroundItems.length ? backgroundItems : [defaults.background],
+        extras: extraItems,
+        poem
+      };
+    }
+
+    function buildPrompt() {
+      const parts = getPromptParts();
+      const blocks = [
+        lineBlock(outputTypePrompt(parts.outputType)),
+        sentence(parts.style),
+        lineBlock(parts.framings),
+        lineBlock(parts.proportions),
+        lineBlock(parts.hair),
+        lineBlock(parts.eyes),
+        lineBlock(parts.expressions),
+        lineBlock(parts.accessories),
+        lineBlock(parts.personalities),
+        lineBlock(parts.worlds),
+        lineBlock(parts.outfits),
+        naturalActionBlock(parts.verbs),
+        lineBlock(parts.backgrounds)
+      ];
+
+      if (parts.extras.length) {
+        blocks.push(lineBlock(parts.extras.map((extra) => {
+          if (extra === "被写界深度") return "浅い被写界深度";
+          return extra;
+        })));
+      }
+
+      blocks.push(`『${parts.poem}』`);
+      return blocks.filter(Boolean).join("\n\n");
+    }
+
+    function setPromptOutput(text) {
+      elements.promptOutput.value = text;
+    }
+
+    function getPromptOutput() {
+      return elements.promptOutput.value.trim();
+    }
+
+    function generatePrompt() {
+      setPromptOutput(buildPrompt());
+      elements.copyStatus.textContent = "";
+      updateStatus();
+    }
+
+    function selectedCount() {
+      return selectedValues("expression").length +
+        selectedValues("accessory").length +
+        selectedValues("personality").length +
+        selectedValues("world").length +
+        (selectedValue("proportion") ? 1 : 0) +
+        selectedValues("hair").length +
+        selectedValues("eye").length +
+        selectedValues("outfit").length +
+        selectedValues("verb").length +
+        selectedValues("photoExtra").length +
+        (elements.backgroundSelect.value ? 1 : 0) +
+        splitFreeText(elements.expressionFree.value).length +
+        splitFreeText(elements.accessoryFree.value).length +
+        splitFreeText(elements.personalityFree.value).length +
+        splitFreeText(elements.worldFree.value).length +
+        splitFreeText(elements.proportionFree.value).length +
+        splitFreeText(elements.hairFree.value).length +
+        splitFreeText(elements.eyeFree.value).length +
+        splitFreeText(elements.outfitFree.value).length +
+        splitFreeText(elements.verbFree.value).length +
+        splitFreeText(elements.backgroundFree.value).length +
+        splitFreeText(elements.framingFree.value).length +
+        (elements.poemInput.value.trim() ? 1 : 0) +
+        (selectedFraming() ? 1 : 0) +
+        (selectedOutputType() ? 1 : 0);
+    }
+
+    function updateStatus() {
+      const count = selectedCount();
+      const style = selectedStyle();
+      const outputType = selectedOutputType();
+      elements.statusMain.textContent = count
+        ? `${count}個の素材でPromptを作成中`
+        : "選ぶだけでPromptが育ちます。";
+      elements.statusSub.textContent = `${outputType} / ${style} / ${isPhotoStyle(style) ? "写真寄りの空気感" : "イラスト向けの空気感"}`;
+    }
+
+    function scrollToResult() {
+      document.querySelector(".result-panel").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    function generateAndShow() {
+      generatePrompt();
+      if (window.matchMedia("(max-width: 719px)").matches) {
+        scrollToResult();
+      }
+    }
+
+    function clearChecks(name) {
+      document.querySelectorAll(`input[name="${name}"]`).forEach((input) => {
+        input.checked = false;
+      });
+    }
+
+    function pickRandom(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function pickMany(items, min, max) {
+      const shuffled = [...items].sort(() => Math.random() - 0.5);
+      const count = Math.floor(Math.random() * (max - min + 1)) + min;
+      return shuffled.slice(0, count);
+    }
+
+    function pickManyOutfits() {
+      const categories = Object.values(outfitGroups);
+      const shuffledCategories = [...categories].sort(() => Math.random() - 0.5);
+      const categoryCount = Math.floor(Math.random() * 3) + 1;
+      return shuffledCategories
+        .slice(0, categoryCount)
+        .map((items) => pickRandom(items));
+    }
+
+    function pickManyHair() {
+      return Object.values(hairGroups).map((items) => pickRandom(items));
+    }
+
+    function pickManyEyes() {
+      return Object.values(eyeGroups).map((items) => pickRandom(items));
+    }
+
+    function setCheckedValues(name, values) {
+      clearChecks(name);
+      document.querySelectorAll(`input[name="${name}"]`).forEach((input) => {
+        input.checked = values.includes(input.value);
+      });
+    }
+
+    function setRadioValue(name, value) {
+      const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+      if (input) input.checked = true;
+    }
+
+    function setStyle(style) {
+      const input = document.querySelector(`input[name="style"][value="${style}"]`);
+      if (input) input.checked = true;
+    }
+
+    function setOutputType(outputType) {
+      const input = document.querySelector(`input[name="outputType"][value="${outputType}"]`);
+      if (input) input.checked = true;
+    }
+
+    function setFraming(framing) {
+      setRadioValue("framing", framing);
+    }
+
+    function openCoreSections() {
+      document.querySelectorAll("details.section").forEach((detail) => {
+        detail.open = ["expression-title", "accessories-title", "personality-title", "world-title", "proportion-title", "hair-title", "eyes-title", "outfits-title", "style-title", "output-type-title", "framing-title"].includes(detail.getAttribute("aria-labelledby"));
+      });
+    }
+
+    function applyPreset(name) {
+      const preset = presets[name];
+      if (!preset) return;
+      setRadioValue("proportion", preset.proportion[0]);
+      setCheckedValues("hair", preset.hair);
+      setCheckedValues("eye", preset.eyes);
+      setCheckedValues("expression", preset.expressions);
+      setCheckedValues("accessory", preset.accessories);
+      setCheckedValues("personality", preset.personalities);
+      setCheckedValues("world", preset.worlds);
+      setCheckedValues("outfit", preset.outfits);
+      setCheckedValues("verb", preset.verbs);
+      elements.backgroundSelect.value = preset.background;
+      elements.expressionFree.value = "";
+      elements.accessoryFree.value = "";
+      elements.personalityFree.value = "";
+      elements.worldFree.value = "";
+      elements.proportionFree.value = "";
+      elements.hairFree.value = preset.hairFree || "";
+      elements.eyeFree.value = preset.eyeFree || "";
+      elements.outfitFree.value = "";
+      elements.verbFree.value = "";
+      elements.backgroundFree.value = "";
+      elements.poemInput.value = preset.poem;
+      setStyle(preset.style);
+      setOutputType(preset.outputType || defaults.outputType);
+      setFraming(preset.framing || defaults.framing);
+      elements.framingFree.value = "";
+      updatePhotoOptions();
+      setCheckedValues("photoExtra", isPhotoStyle(preset.style) ? preset.extras : []);
+      openCoreSections();
+      generateAndShow();
+    }
+
+    function randomizeAll() {
+      const style = pickRandom(styles);
+      setOutputType(pickRandom(outputTypes).label);
+      setFraming(pickRandom(framings));
+      setRadioValue("proportion", pickRandom(proportions));
+      setCheckedValues("hair", pickManyHair());
+      setCheckedValues("eye", pickManyEyes());
+      setCheckedValues("expression", pickMany(expressions, 1, 2));
+      setCheckedValues("accessory", pickMany(accessories, 0, 2));
+      setCheckedValues("personality", pickMany(personalities, 1, 2));
+      setCheckedValues("world", pickMany(worlds, 1, 2));
+      setCheckedValues("outfit", pickManyOutfits());
+      setCheckedValues("verb", pickMany(verbs, 1, 2));
+      elements.backgroundSelect.value = pickRandom(backgrounds);
+      elements.expressionFree.value = "";
+      elements.accessoryFree.value = "";
+      elements.personalityFree.value = "";
+      elements.worldFree.value = "";
+      elements.proportionFree.value = "";
+      elements.hairFree.value = pickRandom(["", "白髪", "青髪", "赤みのあるブラウンの髪", "銀色に近い白髪"]);
+      elements.eyeFree.value = "";
+      elements.outfitFree.value = "";
+      elements.verbFree.value = "";
+      elements.backgroundFree.value = "";
+      elements.framingFree.value = "";
+      elements.poemInput.value = pickRandom(poems);
+      setStyle(style);
+      updatePhotoOptions();
+
+      if (isPhotoStyle(style)) {
+        setCheckedValues("photoExtra", pickMany(photoExtras, 2, 4));
+      } else {
+        clearChecks("photoExtra");
+      }
+
+      generatePrompt();
+    }
+
+    function randomizePoem() {
+      elements.poemInput.value = pickRandom(poems);
+      generatePrompt();
+    }
+
+    function resetForm() {
+      $("#promptForm").reset();
+      setRadioValue("proportion", defaults.proportion[0]);
+      clearChecks("expression");
+      clearChecks("accessory");
+      clearChecks("personality");
+      clearChecks("world");
+      clearChecks("hair");
+      clearChecks("eye");
+      clearChecks("outfit");
+      clearChecks("verb");
+      clearChecks("photoExtra");
+      elements.backgroundSelect.value = "";
+      document.querySelector('input[name="style"][value="日本の漫画調イラスト"]').checked = true;
+      setOutputType(defaults.outputType);
+      setFraming(defaults.framing);
+      elements.framingFree.value = "";
+      updatePhotoOptions();
+      generatePrompt();
+    }
+
+    function fallbackCopyText(text) {
+      if (elements.promptOutput) {
+        elements.promptOutput.focus();
+        elements.promptOutput.select();
+        elements.promptOutput.setSelectionRange(0, text.length);
+        if (document.execCommand("copy")) {
+          return;
+        }
+      }
+
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.top = "0";
+      textarea.style.left = "-9999px";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      const copied = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      if (!copied) {
+        throw new Error("Copy command failed");
+      }
+    }
+
+    async function copyPrompt() {
+      const text = getPromptOutput() || buildPrompt();
+      setPromptOutput(text);
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          elements.promptOutput.focus();
+          elements.promptOutput.select();
+          elements.promptOutput.setSelectionRange(0, text.length);
+          fallbackCopyText(text);
+        }
+        elements.copyStatus.textContent = "コピーしました";
+      } catch (error) {
+        try {
+          elements.promptOutput.focus();
+          elements.promptOutput.select();
+          elements.promptOutput.setSelectionRange(0, text.length);
+          fallbackCopyText(text);
+          elements.copyStatus.textContent = "コピーしました";
+        } catch (fallbackError) {
+          elements.promptOutput.focus();
+          elements.promptOutput.select();
+          elements.promptOutput.setSelectionRange(0, text.length);
+          elements.copyStatus.textContent = "コピーできませんでした。テキストを選択しました。";
+        }
+      }
+
+      window.setTimeout(() => {
+        elements.copyStatus.textContent = "";
+      }, 2200);
+    }
+
+    function updatePhotoOptions() {
+      const show = isPhotoStyle(selectedStyle());
+      elements.photoOptions.classList.toggle("is-visible", show);
+      if (!show) clearChecks("photoExtra");
+    }
+
+    function bindEvents() {
+      $("#generateButton").addEventListener("click", generateAndShow);
+      $("#randomButton").addEventListener("click", () => {
+        randomizeAll();
+        scrollToResult();
+      });
+      $("#resetButton").addEventListener("click", resetForm);
+      $("#randomPoemButton").addEventListener("click", randomizePoem);
+      $("#copyButton").addEventListener("click", copyPrompt);
+      $("#clearOutputButton").addEventListener("click", () => {
+        setPromptOutput("");
+        elements.copyStatus.textContent = "";
+        updateStatus();
+      });
+      elements.styleRadios.addEventListener("change", updatePhotoOptions);
+      elements.outputTypeRadios.addEventListener("change", generatePrompt);
+      elements.framingRadios.addEventListener("change", generatePrompt);
+      $("#promptForm").addEventListener("input", generatePrompt);
+      $("#promptForm").addEventListener("change", generatePrompt);
+      document.querySelectorAll("[data-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const action = button.dataset.action;
+          if (action === "generate") generateAndShow();
+          if (action === "random") {
+            randomizeAll();
+            scrollToResult();
+          }
+          if (action === "copy") copyPrompt();
+          if (action === "result") scrollToResult();
+        });
+      });
+      document.querySelectorAll("[data-preset]").forEach((button) => {
+        button.addEventListener("click", () => applyPreset(button.dataset.preset));
+      });
+    }
+
+    function init() {
+      createCheckList(elements.expressionChecks, expressions, "expression");
+      createCheckList(elements.accessoryChecks, accessories, "accessory");
+      createCheckList(elements.personalityChecks, personalities, "personality");
+      createCheckList(elements.worldChecks, worlds, "world");
+      createRadioList(elements.proportionChecks, proportions, "proportion", defaults.proportion[0]);
+      createCheckGroups(elements.hairGroups, hairGroups, "hair");
+      createCheckGroups(elements.eyeGroups, eyeGroups, "eye");
+      createCheckGroups(elements.outfitGroups, outfitGroups, "outfit");
+      createCheckList(elements.verbChecks, verbs, "verb");
+      createCheckList(elements.photoChecks, photoExtras, "photoExtra");
+      createStyleRadios();
+      createOutputTypeRadios();
+      createFramingRadios();
+      createBackgroundOptions();
+      bindEvents();
+      generatePrompt();
+    }
+
+    init();
+  </script>
+</body>
+</html>
