@@ -1,0 +1,463 @@
+:root {
+  color-scheme: dark;
+  --bg: #071820;
+  --panel: rgba(14, 35, 43, 0.84);
+  --panel-2: rgba(17, 43, 52, 0.78);
+  --line: rgba(229, 219, 205, 0.13);
+  --line-strong: rgba(229, 219, 205, 0.22);
+  --paper: #fbf7ef;
+  --paper-2: #f3eadf;
+  --ink: #1f3136;
+  --ink-soft: #687372;
+  --mist: #c8d1cc;
+  --muted: #819397;
+  --brass: #c99a61;
+  --brass-soft: #e3c190;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(70, 116, 126, 0.25), transparent 28rem),
+    linear-gradient(135deg, #06151c, var(--bg) 52%, #091e26);
+  color: var(--paper);
+  font-family: "Yu Gothic UI", "Hiragino Sans", Meiryo, sans-serif;
+  letter-spacing: 0;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: url("/assets/ui-bg-soft-lab.png") left top / 720px auto no-repeat;
+  opacity: 0.08;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: min(1180px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 22px 14px 28px;
+}
+
+.side-panel {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.app-header {
+  position: relative;
+  padding: 4px 2px 8px;
+}
+
+.app-header::after {
+  content: "";
+  position: absolute;
+  right: 4px;
+  top: 6px;
+  width: 42px;
+  height: 42px;
+  background: url("/assets/memo-lantern.png") center / contain no-repeat;
+  opacity: 0.28;
+  filter: saturate(0.85);
+}
+
+.kicker,
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+h1 {
+  margin: 6px 0 5px;
+  font-size: 1.58rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.recorder,
+.settings {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.recorder {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.recorder::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  bottom: 72px;
+  width: 190px;
+  height: 28px;
+  background: url("/assets/ui-record-glow.png") center / contain no-repeat;
+  opacity: 0.14;
+}
+
+.recorder-head {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.guide {
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: rgba(251, 247, 239, 0.08);
+  object-fit: contain;
+}
+
+.badge {
+  display: inline-grid;
+  min-width: 4.6rem;
+  padding: 4px 10px;
+  place-items: center;
+  border: 1px solid rgba(201, 154, 97, 0.34);
+  border-radius: 999px;
+  background: rgba(201, 154, 97, 0.1);
+  color: var(--brass-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+#statusText {
+  margin: 8px 0 0;
+  color: var(--mist);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+time {
+  align-self: start;
+  color: #dfe8e4;
+  font-family: Consolas, monospace;
+  font-size: 0.94rem;
+}
+
+.waveform {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 210px;
+  max-width: 74%;
+  height: auto;
+  margin: 18px 0 14px 60px;
+  opacity: 0.48;
+  mix-blend-mode: screen;
+}
+
+.button-row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+button {
+  min-height: 44px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, opacity 140ms ease, transform 120ms ease;
+}
+
+button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.42;
+}
+
+.primary {
+  border: 0;
+  background: var(--brass);
+  color: #071820;
+  font-weight: 700;
+}
+
+.primary:hover:not(:disabled) {
+  background: #d4aa73;
+}
+
+.quiet {
+  border: 1px solid rgba(229, 219, 205, 0.16);
+  background: rgba(229, 219, 205, 0.08);
+  color: #d5dfdb;
+}
+
+.quiet:hover:not(:disabled) {
+  border-color: rgba(229, 219, 205, 0.28);
+}
+
+.settings {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  background: var(--panel-2);
+}
+
+.settings::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  bottom: -28px;
+  width: 112px;
+  height: 112px;
+  background: url("/assets/memo-notebook.png") center / contain no-repeat;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.settings label {
+  position: relative;
+  z-index: 1;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+}
+
+label span {
+  color: #a9b8b5;
+  font-size: 0.76rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  outline: none;
+}
+
+input {
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid rgba(229, 219, 205, 0.13);
+  border-radius: 8px;
+  background: rgba(5, 18, 25, 0.34);
+  color: var(--paper);
+}
+
+input::placeholder {
+  color: rgba(201, 210, 205, 0.5);
+}
+
+.editor {
+  position: relative;
+  overflow: hidden;
+  min-height: 62vh;
+  padding: 26px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 7rem),
+    var(--paper);
+  color: var(--ink);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.27);
+}
+
+.editor::before {
+  content: "";
+  position: absolute;
+  inset: 20px 24px auto 24px;
+  height: 20px;
+  background: url("/assets/ui-card-paper.png") left center / 340px auto no-repeat;
+  opacity: 0.16;
+}
+
+.editor::after {
+  content: "";
+  position: absolute;
+  top: 24px;
+  bottom: 24px;
+  left: 18px;
+  width: 1px;
+  background: rgba(170, 123, 69, 0.16);
+}
+
+.editor-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 18px 0 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(31, 49, 54, 0.1);
+}
+
+.title-input {
+  min-height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.chip {
+  flex: 0 0 auto;
+  display: inline-grid;
+  min-width: 108px;
+  min-height: 28px;
+  padding: 6px 13px;
+  place-items: center;
+  background: url("/assets/ui-tag-chip-wide.png") center / 100% 100% no-repeat;
+  color: #796149;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.empty-hint {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1;
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  pointer-events: none;
+  color: rgba(31, 49, 54, 0.44);
+  font-size: 0.82rem;
+}
+
+.empty-hint img {
+  width: 156px;
+  height: 96px;
+  border-radius: 8px;
+  opacity: 0.34;
+  object-fit: cover;
+  object-position: 52% 48%;
+  filter: saturate(0.86);
+}
+
+.empty-hint.hidden {
+  display: none;
+}
+
+textarea {
+  position: relative;
+  z-index: 1;
+  min-height: calc(62vh - 124px);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  line-height: 2;
+  resize: none;
+}
+
+.toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 10;
+  display: grid;
+  width: 220px;
+  height: 56px;
+  place-items: center;
+  transform: translateY(18px);
+  opacity: 0;
+  pointer-events: none;
+  background: url("/assets/memo-saved-toast.png") center / 100% 100% no-repeat;
+  color: var(--paper);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.toast.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+@media (min-width: 820px) {
+  .shell {
+    grid-template-columns: 340px minmax(0, 1fr);
+    align-items: stretch;
+    padding: 42px 28px;
+  }
+
+  .side-panel {
+    position: sticky;
+    top: 42px;
+    align-self: start;
+  }
+
+  .editor {
+    min-height: calc(100vh - 84px);
+  }
+
+  textarea {
+    min-height: calc(100vh - 240px);
+  }
+}
+
+@media (max-width: 560px) {
+  .shell {
+    padding: 22px 12px 28px;
+  }
+
+  .recorder-head {
+    grid-template-columns: 44px 1fr;
+  }
+
+  time {
+    grid-column: 2;
+  }
+
+  .waveform {
+    margin-left: 0;
+  }
+
+  .editor {
+    padding: 22px 20px;
+  }
+
+  .editor-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .empty-hint span {
+    display: none;
+  }
+}

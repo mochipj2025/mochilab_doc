@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>音声入力メモ</title>
+    <link rel="stylesheet" href="/web/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="side-panel">
+        <header class="app-header">
+          <p class="kicker">M.O.C.H.I. LABO / Local Tool</p>
+          <h1>音声入力メモ</h1>
+          <p class="lead">Local voice note</p>
+        </header>
+
+        <section class="recorder" aria-label="音声入力">
+          <div class="recorder-head">
+            <img class="guide" src="/assets/memo-mochi-mic.png" alt="" />
+            <div>
+              <span id="stateBadge" class="badge">READY</span>
+              <p id="statusText">マイク待機中</p>
+            </div>
+            <time id="timer">00:00</time>
+          </div>
+          <img id="waveform" class="waveform" src="/assets/memo-waveform-glow.png" alt="" />
+          <div class="button-row">
+            <button id="startButton" class="primary" type="button">記録する</button>
+            <button id="stopButton" class="quiet" type="button" disabled>止めて保存</button>
+          </div>
+        </section>
+
+        <section class="settings" aria-label="保存設定">
+          <label>
+            <span>保存先</span>
+            <input id="saveDir" type="text" spellcheck="false" />
+          </label>
+          <label>
+            <span>タグ</span>
+            <input id="tags" type="text" placeholder="voice memo, research log" />
+          </label>
+        </section>
+      </aside>
+
+      <section class="editor" aria-label="Markdown下書き">
+        <div class="editor-head">
+          <input id="titleInput" class="title-input" type="text" value="音声入力メモ" />
+          <span class="chip">voice memo</span>
+        </div>
+        <div id="emptyHint" class="empty-hint">
+          <img src="/assets/memo-researcher-desk.png" alt="" />
+          <span>ここに文字起こしが入ります。</span>
+        </div>
+        <textarea id="memoBody" spellcheck="false"></textarea>
+      </section>
+
+      <div id="toast" class="toast" role="status" aria-live="polite">
+        <span>保存しました</span>
+      </div>
+    </main>
+    <script src="/web/app.js"></script>
+  </body>
+</html>

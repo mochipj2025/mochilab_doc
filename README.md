@@ -19,6 +19,7 @@ AI × Care × Design experimental lab.
 ## Projects
 
 - Promptmaker
+- Voice Input Memo
 - Review Assistant
 - Future Karte UI
 
