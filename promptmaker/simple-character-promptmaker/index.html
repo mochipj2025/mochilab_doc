@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="短い日本語入力から、画像生成AI向けの自然なキャラクタープロンプトを作るツールです。">
+  <title>キャラクタープロンプトメーカー</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">プロンプトメーカー</p>
+        <h1>キャラクタープロンプトメーカー</h1>
+      </div>
+      <button class="mode-button" type="button" id="modeButton" aria-pressed="false">暗色</button>
+    </header>
+
+    <section class="panel output-panel" aria-label="生成結果">
+      <div class="panel-head">
+        <h2>出力</h2>
+        <button class="copy-button" type="button" id="copyButton" disabled>コピー</button>
+      </div>
+      <pre class="prompt-output" id="promptOutput" aria-live="polite"></pre>
+    </section>
+
+    <form class="panel form-panel" id="promptForm" autocomplete="off">
+      <section class="group" aria-labelledby="styleTitle">
+        <h2 id="styleTitle">スタイル</h2>
+        <div class="field">
+          <label for="style">スタイル</label>
+          <input id="style" name="style" list="styleList" placeholder="ガラス細工調">
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="bodyTitle">
+        <h2 id="bodyTitle">基本</h2>
+        <div class="field">
+          <label for="proportion">頭身</label>
+          <input id="proportion" name="proportion" placeholder="6頭身">
+        </div>
+        <div class="field">
+          <label for="age">年齢</label>
+          <input id="age" name="age" placeholder="20代前半">
+        </div>
+        <div class="field">
+          <label for="bodyType">体型</label>
+          <input id="bodyType" name="bodyType" placeholder="細身">
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="faceTitle">
+        <h2 id="faceTitle">顔</h2>
+        <div class="field">
+          <label for="faceType">顔タイプ</label>
+          <input id="faceType" name="faceType" placeholder="中性的な顔">
+        </div>
+        <div class="field">
+          <label for="expression">表情</label>
+          <input id="expression" name="expression" placeholder="眠そうな表情">
+        </div>
+        <div class="field">
+          <label for="faceItem">顔アイテム</label>
+          <input id="faceItem" name="faceItem" placeholder="眼帯とピアス">
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="hairTitle">
+        <h2 id="hairTitle">髪と目</h2>
+        <div class="field">
+          <label for="hairStyle">髪型</label>
+          <input id="hairStyle" name="hairStyle" placeholder="金髪ショートボブ">
+        </div>
+        <div class="field">
+          <label for="bangs">前髪</label>
+          <input id="bangs" name="bangs" placeholder="斜め前髪">
+        </div>
+        <div class="field">
+          <label for="eyes">目</label>
+          <input id="eyes" name="eyes" placeholder="赤い目">
+        </div>
+        <div class="field">
+          <label for="feature">特徴</label>
+          <input id="feature" name="feature" placeholder="八重歯">
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="outfitTitle">
+        <h2 id="outfitTitle">衣装</h2>
+        <div class="field">
+          <label for="outerTop">衣装上</label>
+          <input id="outerTop" name="outerTop" placeholder="和装上衣">
+        </div>
+        <div class="field">
+          <label for="inner">インナー</label>
+          <input id="inner" name="inner" placeholder="白インナー">
+        </div>
+        <div class="field">
+          <label for="bottom">衣装下</label>
+          <input id="bottom" name="bottom" placeholder="ミニスカート">
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="itemsTitle">
+        <h2 id="itemsTitle">アイテム</h2>
+        <div class="field">
+          <label for="headItem">頭アイテム</label>
+          <input id="headItem" name="headItem" placeholder="頭に狐面">
+        </div>
+        <div class="field">
+          <label for="armItem">腕アイテム</label>
+          <input id="armItem" name="armItem" placeholder="腕に包帯">
+        </div>
+        <div class="field">
+          <label for="chestItem">胸アイテム</label>
+          <input id="chestItem" name="chestItem" placeholder="胸にエンブレム">
+        </div>
+        <div class="field">
+          <label for="backItem">背中アイテム</label>
+          <input id="backItem" name="backItem" placeholder="背中にギター">
+        </div>
+        <div class="field">
+          <label for="waistItem">腰アイテム</label>
+          <input id="waistItem" name="waistItem" placeholder="腰に鎖">
+        </div>
+        <div class="field">
+          <label for="legItem">足アイテム</label>
+          <input id="legItem" name="legItem" placeholder="足にニーハイ">
+        </div>
+        <div class="field">
+          <label for="shoes">靴</label>
+          <input id="shoes" name="shoes" placeholder="厚底ブーツ">
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="compositionTitle">
+        <h2 id="compositionTitle">構図</h2>
+        <div class="field">
+          <label for="direction">向き</label>
+          <input id="direction" name="direction" placeholder="横を向いている">
+        </div>
+        <div class="field">
+          <label for="range">写す範囲</label>
+          <input id="range" name="range" list="rangeList" placeholder="バストアップ">
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="sceneTitle">
+        <h2 id="sceneTitle">場面</h2>
+        <div class="field">
+          <label for="action">行動</label>
+          <input id="action" name="action" placeholder="踊っている">
+        </div>
+        <div class="field">
+          <label for="background">背景</label>
+          <input id="background" name="background" placeholder="雨の路地裏">
+        </div>
+        <div class="field">
+          <label for="mood">空気感</label>
+          <input id="mood" name="mood" placeholder="静かな雨の夜">
+        </div>
+        <div class="field">
+          <label for="line">一言</label>
+          <input id="line" name="line" placeholder="朝はまだ遠かった">
+        </div>
+      </section>
+
+      <div class="actions">
+        <button class="quiet-button" type="button" id="sampleButton">例を入れる</button>
+        <button class="quiet-button" type="reset">空にする</button>
+      </div>
+    </form>
+  </main>
+
+  <datalist id="styleList">
+    <option value="ガラス細工調"></option>
+    <option value="木彫り風"></option>
+    <option value="粘土風"></option>
+    <option value="羊毛フェルト風"></option>
+    <option value="水彩風"></option>
+    <option value="漫画風"></option>
+    <option value="アニメ風"></option>
+  </datalist>
+
+  <datalist id="rangeList">
+    <option value="顔アップ"></option>
+    <option value="バストアップ"></option>
+    <option value="腰上まで"></option>
+    <option value="膝上まで"></option>
+    <option value="全身"></option>
+    <option value="引き構図"></option>
+  </datalist>
+</body>
+</html>

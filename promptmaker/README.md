@@ -4,6 +4,17 @@ M.O.C.H.I. LABOのプロンプト制作ツール置き場です。
 
 ## Tools
 
+### キャラクタープロンプトメーカー
+
+短い日本語入力から、画像生成AI向けの自然な箇条書きキャラクタープロンプトを作るツールです。
+
+- 場所: `simple-character-promptmaker/`
+- 入口: `index.html`
+- できること:
+  - 1項目1入力でキャラクター要素を整理
+  - 空欄を省いて、改行構造を保った日本語プロンプトを生成
+  - 生成結果だけをコピー
+
 ### あなただけの相棒maker
 
 ランダムな言葉の組み合わせから、小さな相棒キャラクターの三面図プロンプトを作る試作品です。
@@ -15,16 +26,7 @@ M.O.C.H.I. LABOのプロンプト制作ツール置き場です。
   - 生成されたキャラ要素と固定プロンプトを合体
   - 完成プロンプトをコピー
 
-### Image 2.0 キャラprompt maker
-
-5人の女子キャラを、リアル職業やファンタジー職へ短文で展開する試作品です。
-
-- 場所: `dev/image2-character-promptmaker.html`
-- 入口: `index.html`
-- できること:
-  - 新しいCharacter PromptMakerへ案内
-
-### Character Idea Maker
+### キャラ案メモ maker
 
 ランダム生成と固定で、日本語のキャラクター設定メモを作る試作品です。
 
@@ -34,6 +36,10 @@ M.O.C.H.I. LABOのプロンプト制作ツール置き場です。
   - 日本語UIから自然な日本語メモを生成
   - カテゴリごとのランダム生成と固定
   - コピー、リセット、localStorage保存
+
+### 旧入口
+
+`dev/image2-character-promptmaker.html` は `dev/character-promptmaker/` への転送用として残しています。
 
 ## Notes
 
