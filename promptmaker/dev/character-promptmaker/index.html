@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Character Idea Maker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">M.O.C.H.I. LABO / Idea Tool</p>
+      <h1>Character Idea Maker</h1>
+      <p class="lead">キャラクターの特徴や空気感を、ランダムに整理するための小さな道具です。Prompt最適化ではなく、イメージの種を静かにまとめます。</p>
+    </header>
+
+    <section class="toolbar" aria-label="操作">
+      <button class="primary" id="randomButton" type="button">ランダム生成</button>
+      <button id="lockAllButton" type="button">項目固定</button>
+      <button id="resetButton" type="button">リセット</button>
+      <button id="copyButton" type="button">コピー</button>
+    </section>
+
+    <section class="layout" aria-label="Character Idea Maker">
+      <div class="cards" id="cards">
+        <article class="card">
+          <header class="card-head">
+            <div class="card-title">
+              <h2>キャラ</h2>
+              <p>髪、目、顔まわりの小さな特徴を整理します。</p>
+            </div>
+            <button class="lock-button" type="button" data-group-lock="character" aria-label="キャラを固定">固定</button>
+          </header>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">髪型</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="hairStyle" data-value="ショート">ショート</button>
+              <button class="choice" type="button" data-field="hairStyle" data-value="ボブ">ボブ</button>
+              <button class="choice" type="button" data-field="hairStyle" data-value="ショートボブ">ショートボブ</button>
+              <button class="choice" type="button" data-field="hairStyle" data-value="ロング">ロング</button>
+              <button class="choice" type="button" data-field="hairStyle" data-value="ウルフ">ウルフ</button>
+              <button class="choice" type="button" data-field="hairStyle" data-value="ツインテール">ツインテール</button>
+              <button class="choice" type="button" data-field="hairStyle" data-value="ポニーテール">ポニーテール</button>
+            </div>
+          </section>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">前髪</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="bangs" data-value="ぱっつん">ぱっつん</button>
+              <button class="choice" type="button" data-field="bangs" data-value="シースルー">シースルー</button>
+              <button class="choice" type="button" data-field="bangs" data-value="センター分け">センター分け</button>
+              <button class="choice" type="button" data-field="bangs" data-value="斜め前髪">斜め前髪</button>
+              <button class="choice" type="button" data-field="bangs" data-value="前髪なし">前髪なし</button>
+            </div>
+          </section>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">髪色</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="hairColor" data-value="黒髪">黒髪</button>
+              <button class="choice" type="button" data-field="hairColor" data-value="茶髪">茶髪</button>
+              <button class="choice" type="button" data-field="hairColor" data-value="金髪">金髪</button>
+              <button class="choice" type="button" data-field="hairColor" data-value="銀髪">銀髪</button>
+              <button class="choice" type="button" data-field="hairColor" data-value="白髪">白髪</button>
+              <button class="choice" type="button" data-field="hairColor" data-value="青髪">青髪</button>
+              <button class="choice" type="button" data-field="hairColor" data-value="ピンク髪">ピンク髪</button>
+            </div>
+          </section>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">目の色</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="eyeColor" data-value="青い目">青い目</button>
+              <button class="choice" type="button" data-field="eyeColor" data-value="赤い目">赤い目</button>
+              <button class="choice" type="button" data-field="eyeColor" data-value="金色の目">金色の目</button>
+              <button class="choice" type="button" data-field="eyeColor" data-value="緑の目">緑の目</button>
+              <button class="choice" type="button" data-field="eyeColor" data-value="紫の目">紫の目</button>
+              <button class="choice" type="button" data-field="eyeColor" data-value="黒い目">黒い目</button>
+            </div>
+          </section>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">特徴</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="features" data-value="オッドアイ">オッドアイ</button>
+              <button class="choice" type="button" data-field="features" data-value="眼帯">眼帯</button>
+              <button class="choice" type="button" data-field="features" data-value="ホクロ">ホクロ</button>
+              <button class="choice" type="button" data-field="features" data-value="八重歯">八重歯</button>
+              <button class="choice" type="button" data-field="features" data-value="ケモ耳">ケモ耳</button>
+              <button class="choice" type="button" data-field="features" data-value="ヘッドホン">ヘッドホン</button>
+              <button class="choice" type="button" data-field="features" data-value="メガネ">メガネ</button>
+            </div>
+          </section>
+        </article>
+
+        <article class="card">
+          <header class="card-head">
+            <div class="card-title">
+              <h2>衣装</h2>
+              <p>トップス、インナー、ボトムスをひとつずつ選びます。</p>
+            </div>
+            <button class="lock-button" type="button" data-group-lock="outfit" aria-label="衣装を固定">固定</button>
+          </header>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">トップス</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="tops" data-value="白Tシャツ">白Tシャツ</button>
+              <button class="choice" type="button" data-field="tops" data-value="パーカー">パーカー</button>
+              <button class="choice" type="button" data-field="tops" data-value="シャツ">シャツ</button>
+              <button class="choice" type="button" data-field="tops" data-value="ニット">ニット</button>
+              <button class="choice" type="button" data-field="tops" data-value="制服ジャケット">制服ジャケット</button>
+              <button class="choice" type="button" data-field="tops" data-value="和装上衣">和装上衣</button>
+              <button class="choice" type="button" data-field="tops" data-value="ゴシックトップス">ゴシックトップス</button>
+              <button class="choice" type="button" data-field="tops" data-value="チャイナトップス">チャイナトップス</button>
+              <button class="choice" type="button" data-field="tops" data-value="レザージャケット">レザージャケット</button>
+              <button class="choice" type="button" data-field="tops" data-value="戦闘ジャケット">戦闘ジャケット</button>
+              <button class="choice" type="button" data-field="tops" data-value="オフショルダー">オフショルダー</button>
+              <button class="choice" type="button" data-field="tops" data-value="タートルネック">タートルネック</button>
+              <button class="choice" type="button" data-field="tops" data-value="クロップドトップス">クロップドトップス</button>
+            </div>
+          </section>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">インナー</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="inners" data-value="タンクトップ">タンクトップ</button>
+              <button class="choice" type="button" data-field="inners" data-value="白インナー">白インナー</button>
+              <button class="choice" type="button" data-field="inners" data-value="黒インナー">黒インナー</button>
+              <button class="choice" type="button" data-field="inners" data-value="ハイネック">ハイネック</button>
+              <button class="choice" type="button" data-field="inners" data-value="レースインナー">レースインナー</button>
+              <button class="choice" type="button" data-field="inners" data-value="スポーツインナー">スポーツインナー</button>
+              <button class="choice" type="button" data-field="inners" data-value="ボディスーツ">ボディスーツ</button>
+              <button class="choice" type="button" data-field="inners" data-value="包帯風インナー">包帯風インナー</button>
+              <button class="choice" type="button" data-field="inners" data-value="メッシュインナー">メッシュインナー</button>
+            </div>
+          </section>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">ボトムス</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="bottoms" data-value="スカート">スカート</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="ロングスカート">ロングスカート</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="ミニスカート">ミニスカート</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="ショートパンツ">ショートパンツ</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="ワイドパンツ">ワイドパンツ</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="スキニーパンツ">スキニーパンツ</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="和装袴">和装袴</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="レザーパンツ">レザーパンツ</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="ダメージデニム">ダメージデニム</button>
+              <button class="choice" type="button" data-field="bottoms" data-value="戦闘用ボトムス">戦闘用ボトムス</button>
+            </div>
+          </section>
+        </article>
+
+        <article class="card">
+          <header class="card-head">
+            <div class="card-title">
+              <h2>雰囲気</h2>
+              <p>場所や光、空気感の方向を決めます。</p>
+            </div>
+            <button class="lock-button" type="button" data-group-lock="mood" aria-label="雰囲気を固定">固定</button>
+          </header>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">雰囲気</p>
+              <p class="field-meta">複数選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="moods" data-value="深海">深海</button>
+              <button class="choice" type="button" data-field="moods" data-value="雨の夜">雨の夜</button>
+              <button class="choice" type="button" data-field="moods" data-value="静かな朝">静かな朝</button>
+              <button class="choice" type="button" data-field="moods" data-value="ネオン街">ネオン街</button>
+              <button class="choice" type="button" data-field="moods" data-value="幻想的">幻想的</button>
+              <button class="choice" type="button" data-field="moods" data-value="廃墟">廃墟</button>
+              <button class="choice" type="button" data-field="moods" data-value="和風">和風</button>
+              <button class="choice" type="button" data-field="moods" data-value="北欧風">北欧風</button>
+              <button class="choice" type="button" data-field="moods" data-value="レトロ未来">レトロ未来</button>
+            </div>
+          </section>
+        </article>
+
+        <article class="card">
+          <header class="card-head">
+            <div class="card-title">
+              <h2>動き</h2>
+              <p>静かな動作と、少し動きのある姿を混ぜられます。</p>
+            </div>
+            <button class="lock-button" type="button" data-group-lock="motion" aria-label="動きを固定">固定</button>
+          </header>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">静止系</p>
+              <p class="field-meta">複数選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="stillMotions" data-value="静止">静止</button>
+              <button class="choice" type="button" data-field="stillMotions" data-value="たたずむ">たたずむ</button>
+              <button class="choice" type="button" data-field="stillMotions" data-value="座る">座る</button>
+              <button class="choice" type="button" data-field="stillMotions" data-value="見つめる">見つめる</button>
+              <button class="choice" type="button" data-field="stillMotions" data-value="本を読む">本を読む</button>
+              <button class="choice" type="button" data-field="stillMotions" data-value="空を見上げる">空を見上げる</button>
+            </div>
+          </section>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">躍動系</p>
+              <p class="field-meta">複数選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="activeMotions" data-value="歩く">歩く</button>
+              <button class="choice" type="button" data-field="activeMotions" data-value="走る">走る</button>
+              <button class="choice" type="button" data-field="activeMotions" data-value="振り向く">振り向く</button>
+              <button class="choice" type="button" data-field="activeMotions" data-value="飛び跳ねる">飛び跳ねる</button>
+              <button class="choice" type="button" data-field="activeMotions" data-value="踊る">踊る</button>
+              <button class="choice" type="button" data-field="activeMotions" data-value="刀を振る">刀を振る</button>
+              <button class="choice" type="button" data-field="activeMotions" data-value="風になびく">風になびく</button>
+            </div>
+          </section>
+        </article>
+
+        <article class="card">
+          <header class="card-head">
+            <div class="card-title">
+              <h2>アイテム</h2>
+              <p>手元や近くにあるものを選びます。</p>
+            </div>
+            <button class="lock-button" type="button" data-group-lock="items" aria-label="アイテムを固定">固定</button>
+          </header>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">アイテム</p>
+              <p class="field-meta">複数選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="items" data-value="本">本</button>
+              <button class="choice" type="button" data-field="items" data-value="刀">刀</button>
+              <button class="choice" type="button" data-field="items" data-value="花">花</button>
+              <button class="choice" type="button" data-field="items" data-value="ランタン">ランタン</button>
+              <button class="choice" type="button" data-field="items" data-value="マグカップ">マグカップ</button>
+              <button class="choice" type="button" data-field="items" data-value="ギター">ギター</button>
+              <button class="choice" type="button" data-field="items" data-value="仮面">仮面</button>
+              <button class="choice" type="button" data-field="items" data-value="チェーンアクセサリー">チェーンアクセサリー</button>
+            </div>
+          </section>
+        </article>
+
+        <article class="card">
+          <header class="card-head">
+            <div class="card-title">
+              <h2>画風</h2>
+              <p>最後に、絵としての見え方だけを添えます。</p>
+            </div>
+            <button class="lock-button" type="button" data-group-lock="style" aria-label="画風を固定">固定</button>
+          </header>
+
+          <section class="field">
+            <div class="field-head">
+              <p class="field-label">画風</p>
+              <p class="field-meta">単一選択</p>
+            </div>
+            <div class="choices">
+              <button class="choice" type="button" data-field="artStyle" data-value="日本のアニメ調">日本のアニメ調</button>
+              <button class="choice" type="button" data-field="artStyle" data-value="水彩">水彩</button>
+              <button class="choice" type="button" data-field="artStyle" data-value="セミリアル">セミリアル</button>
+              <button class="choice" type="button" data-field="artStyle" data-value="漫画風">漫画風</button>
+              <button class="choice" type="button" data-field="artStyle" data-value="油絵風">油絵風</button>
+            </div>
+          </section>
+        </article>
+      </div>
+
+      <aside class="output-card" aria-label="出力">
+        <div class="output-head">
+          <h2>Idea Memo</h2>
+          <p>品質タグや最適化文は入れず、特徴と空気感だけを短く整理します。</p>
+        </div>
+        <textarea id="ideaOutput" readonly></textarea>
+        <p class="status" id="status" role="status"></p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "mochi-character-idea-maker-state-v2";
+
+    const GROUPS = [
+      {
+        id: "character",
+        title: "キャラ",
+        note: "髪、目、顔まわりの小さな特徴を整理します。",
+        fields: [
+          { id: "hairStyle", label: "髪型", mode: "single", values: ["ショート", "ボブ", "ショートボブ", "ロング", "ウルフ", "ツインテール", "ポニーテール"] },
+          { id: "bangs", label: "前髪", mode: "single", values: ["ぱっつん", "シースルー", "センター分け", "斜め前髪", "前髪なし"] },
+          { id: "hairColor", label: "髪色", mode: "single", values: ["黒髪", "茶髪", "金髪", "銀髪", "白髪", "青髪", "ピンク髪"] },
+          { id: "eyeColor", label: "目の色", mode: "single", values: ["青い目", "赤い目", "金色の目", "緑の目", "紫の目", "黒い目"] },
+          { id: "features", label: "特徴", mode: "multi", values: ["オッドアイ", "眼帯", "ホクロ", "八重歯", "ケモ耳", "ヘッドホン", "メガネ"] }
+        ]
+      },
+      {
+        id: "outfit",
+        title: "衣装",
+        note: "トップス、インナー、ボトムスをひとつずつ選びます。",
+        fields: [
+          { id: "tops", label: "トップス", mode: "single", values: ["白Tシャツ", "パーカー", "シャツ", "ニット", "制服ジャケット", "和装上衣", "ゴシックトップス", "チャイナトップス", "レザージャケット", "戦闘ジャケット", "オフショルダー", "タートルネック", "クロップドトップス"] },
+          { id: "inners", label: "インナー", mode: "single", values: ["タンクトップ", "白インナー", "黒インナー", "ハイネック", "レースインナー", "スポーツインナー", "ボディスーツ", "包帯風インナー", "メッシュインナー"] },
+          { id: "bottoms", label: "ボトムス", mode: "single", values: ["スカート", "ロングスカート", "ミニスカート", "ショートパンツ", "ワイドパンツ", "スキニーパンツ", "和装袴", "レザーパンツ", "ダメージデニム", "戦闘用ボトムス"] }
+        ]
+      },
+      {
+        id: "mood",
+        title: "雰囲気",
+        note: "場所や光、空気感の方向を決めます。",
+        fields: [
+          { id: "moods", label: "雰囲気", mode: "multi", values: ["深海", "雨の夜", "静かな朝", "ネオン街", "幻想的", "廃墟", "和風", "北欧風", "レトロ未来"] }
+        ]
+      },
+      {
+        id: "motion",
+        title: "動き",
+        note: "静かな動作と、少し動きのある姿を混ぜられます。",
+        fields: [
+          { id: "stillMotions", label: "静止系", mode: "multi", values: ["静止", "たたずむ", "座る", "見つめる", "本を読む", "空を見上げる"] },
+          { id: "activeMotions", label: "躍動系", mode: "multi", values: ["歩く", "走る", "振り向く", "飛び跳ねる", "踊る", "刀を振る", "風になびく"] }
+        ]
+      },
+      {
+        id: "items",
+        title: "アイテム",
+        note: "手元や近くにあるものを選びます。",
+        fields: [
+          { id: "items", label: "アイテム", mode: "multi", values: ["本", "刀", "花", "ランタン", "マグカップ", "ギター", "仮面", "チェーンアクセサリー"] }
+        ]
+      },
+      {
+        id: "style",
+        title: "画風",
+        note: "最後に、絵としての見え方だけを添えます。",
+        fields: [
+          { id: "artStyle", label: "画風", mode: "single", values: ["日本のアニメ調", "水彩", "セミリアル", "漫画風", "油絵風"] }
+        ]
+      }
+    ];
+
+    const state = {
+      values: {},
+      locked: {}
+    };
+
+    const cards = document.querySelector("#cards");
+    const output = document.querySelector("#ideaOutput");
+    const status = document.querySelector("#status");
+
+    document.querySelector("#randomButton").addEventListener("click", randomizeUnlocked);
+    document.querySelector("#lockAllButton").addEventListener("click", toggleAllLocks);
+    document.querySelector("#resetButton").addEventListener("click", resetAll);
+    document.querySelector("#copyButton").addEventListener("click", copyIdea);
+
+    initialize();
+
+    function initialize() {
+      restoreState();
+
+      getFields().forEach((field) => {
+        if (!hasValidValue(field)) {
+          state.values[field.id] = randomValue(field);
+        }
+
+        if (typeof state.locked[field.id] !== "boolean") {
+          state.locked[field.id] = false;
+        }
+      });
+
+      hydrateCards();
+      updateOutput();
+    }
+
+    function hydrateCards() {
+      cards.querySelectorAll("[data-group-lock]").forEach((button) => {
+        button.addEventListener("click", () => toggleGroupLock(button.dataset.groupLock));
+      });
+
+      cards.querySelectorAll("[data-field]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const field = findField(button.dataset.field);
+          updateFieldValue(field, button.dataset.value);
+          persistState();
+          syncCards();
+          updateOutput();
+          setStatus("項目を更新しました。");
+        });
+      });
+
+      syncCards();
+    }
+
+    function syncCards() {
+      GROUPS.forEach((group) => {
+        const lockButton = cards.querySelector(`[data-group-lock="${group.id}"]`);
+        const groupLocked = isGroupLocked(group);
+
+        if (lockButton) {
+          lockButton.classList.toggle("is-locked", groupLocked);
+          lockButton.textContent = groupLocked ? "固定中" : "固定";
+        }
+
+        group.fields.forEach((field) => {
+          const meta = cards.querySelector(`[data-meta="${field.id}"]`);
+          if (meta) {
+            meta.textContent = `${field.mode === "single" ? "単一選択" : "複数選択"}${state.locked[field.id] ? " / 固定中" : ""}`;
+          }
+        });
+      });
+
+      cards.querySelectorAll("[data-field]").forEach((button) => {
+        const field = findField(button.dataset.field);
+        button.setAttribute("aria-pressed", isSelected(field, state.values[field.id], button.dataset.value));
+      });
+    }
+
+    function updateFieldValue(field, value) {
+      if (field.mode === "single") {
+        state.values[field.id] = value;
+        return;
+      }
+
+      const current = Array.isArray(state.values[field.id]) ? state.values[field.id] : [];
+      state.values[field.id] = current.includes(value)
+        ? current.filter((item) => item !== value)
+        : [...current, value];
+    }
+
+    function randomizeUnlocked() {
+      getFields().forEach((field) => {
+        if (!state.locked[field.id]) {
+          state.values[field.id] = randomValue(field);
+        }
+      });
+
+      persistState();
+      syncCards();
+      updateOutput();
+      setStatus("ランダム生成しました。");
+    }
+
+    function toggleGroupLock(groupId) {
+      const group = GROUPS.find((item) => item.id === groupId);
+      const nextLocked = !isGroupLocked(group);
+
+      group.fields.forEach((field) => {
+        state.locked[field.id] = nextLocked;
+      });
+
+      persistState();
+      syncCards();
+      setStatus(nextLocked ? `${group.title}を固定しました。` : `${group.title}の固定を外しました。`);
+    }
+
+    function toggleAllLocks() {
+      const allLocked = getFields().every((field) => state.locked[field.id]);
+
+      getFields().forEach((field) => {
+        state.locked[field.id] = !allLocked;
+      });
+
+      persistState();
+      syncCards();
+      setStatus(allLocked ? "すべての固定を外しました。" : "すべての項目を固定しました。");
+    }
+
+    function resetAll() {
+      state.values = {};
+      state.locked = {};
+
+      getFields().forEach((field) => {
+        state.values[field.id] = field.mode === "single" ? field.values[0] : [];
+        state.locked[field.id] = false;
+      });
+
+      persistState();
+      syncCards();
+      updateOutput();
+      setStatus("リセットしました。");
+    }
+
+    function updateOutput() {
+      output.value = buildIdea();
+    }
+
+    function buildIdea() {
+      const v = state.values;
+      const lines = [
+        `${v.artStyle}。`,
+        "",
+        `${v.hairColor}${v.hairStyle}。`,
+        bangsLine(v.bangs),
+        `${v.eyeColor}。`
+      ];
+
+      addOptionalLine(lines, joinList(v.features, "と"), "", "。");
+      lines.push("");
+      addOptionalLine(lines, outfitLine(v.tops, "に、"));
+      addOptionalLine(lines, outfitLine(v.inners, "。"));
+      addOptionalLine(lines, outfitLine(v.bottoms, "。"));
+      lines.push("");
+      addOptionalLine(lines, moodLine(v.moods));
+      lines.push("");
+      addOptionalLine(lines, motionLine([...v.stillMotions, ...v.activeMotions], v.items));
+
+      return trimBlankLines(lines).join("\n");
+    }
+
+    function bangsLine(bangs) {
+      if (bangs === "前髪なし") {
+        return "前髪なし。";
+      }
+
+      return `${bangs}前髪。`;
+    }
+
+    function outfitLine(values, suffix) {
+      const selected = Array.isArray(values) ? values : values ? [values] : [];
+
+      if (selected.length === 0) {
+        return "";
+      }
+
+      if (selected.length === 1) {
+        return `${selected[0]}${suffix}`;
+      }
+
+      return `${joinList(selected, "と")}${suffix}`;
+    }
+
+    function moodLine(values) {
+      if (!values || values.length === 0) {
+        return "";
+      }
+
+      if (values.length === 1) {
+        return `${values[0]}の雰囲気。`;
+      }
+
+      return `${joinList(values, "のような、\n")}の雰囲気。`;
+    }
+
+    function motionLine(motions, items) {
+      const selectedMotions = motions.filter(Boolean);
+      const itemText = joinList(items, "と");
+
+      if (selectedMotions.length === 0 && !itemText) {
+        return "";
+      }
+
+      if (selectedMotions.length === 0) {
+        return `${itemText}を持っている。`;
+      }
+
+      if (!itemText) {
+        return `${joinMotion(selectedMotions)}。`;
+      }
+
+      return `${itemText}を持って、\n${joinMotion(selectedMotions)}。`;
+    }
+
+    function joinMotion(values) {
+      if (values.length === 1) {
+        return toContinuousForm(values[0]);
+      }
+
+      const last = values[values.length - 1];
+      const rest = values.slice(0, -1).map(toTeForm);
+      return `${rest.join("、")}ながら${toContinuousForm(last)}`;
+    }
+
+    function toTeForm(value) {
+      const forms = {
+        "静止": "静止し",
+        "たたずむ": "たたずみ",
+        "座る": "座り",
+        "見つめる": "見つめ",
+        "本を読む": "本を読み",
+        "空を見上げる": "空を見上げ",
+        "歩く": "歩き",
+        "走る": "走り",
+        "振り向く": "振り向き",
+        "飛び跳ねる": "飛び跳ね",
+        "踊る": "踊り",
+        "刀を振る": "刀を振り",
+        "風になびく": "風になびき"
+      };
+
+      return forms[value] || value;
+    }
+
+    function toContinuousForm(value) {
+      const forms = {
+        "静止": "静止している",
+        "たたずむ": "たたずんでいる",
+        "座る": "座っている",
+        "見つめる": "見つめている",
+        "本を読む": "本を読んでいる",
+        "空を見上げる": "空を見上げている",
+        "歩く": "歩いている",
+        "走る": "走っている",
+        "振り向く": "振り向いている",
+        "飛び跳ねる": "飛び跳ねている",
+        "踊る": "踊っている",
+        "刀を振る": "刀を振っている",
+        "風になびく": "風になびいている"
+      };
+
+      return forms[value] || `${value}している`;
+    }
+
+    function addOptionalLine(lines, value, prefix = "", suffix = "") {
+      if (value) {
+        lines.push(`${prefix}${value}${suffix}`);
+      }
+    }
+
+    function trimBlankLines(lines) {
+      return lines.filter((line, index, array) => {
+        const previous = array[index - 1];
+        return line !== "" || previous !== "";
+      }).filter((line, index, array) => {
+        return !(line === "" && (index === 0 || index === array.length - 1));
+      });
+    }
+
+    async function copyIdea() {
+      try {
+        await navigator.clipboard.writeText(output.value);
+        setStatus("コピーしました。");
+      } catch (error) {
+        output.select();
+        document.execCommand("copy");
+        setStatus("選択してコピーしました。");
+      }
+    }
+
+    function isSelected(field, current, value) {
+      if (field.mode === "single") {
+        return current === value;
+      }
+
+      return Array.isArray(current) && current.includes(value);
+    }
+
+    function hasValidValue(field) {
+      const value = state.values[field.id];
+
+      if (field.mode === "single") {
+        return field.values.includes(value);
+      }
+
+      return Array.isArray(value) && value.every((item) => field.values.includes(item));
+    }
+
+    function randomValue(field) {
+      if (field.mode === "single") {
+        return pick(field.values);
+      }
+
+      return pickSome(field.values);
+    }
+
+    function pickSome(values) {
+      const shuffled = [...values].sort(() => Math.random() - 0.5);
+      const count = Math.floor(Math.random() * 3) + 1;
+      return shuffled.slice(0, count);
+    }
+
+    function isGroupLocked(group) {
+      return group.fields.every((field) => state.locked[field.id]);
+    }
+
+    function getFields() {
+      return GROUPS.flatMap((group) => group.fields);
+    }
+
+    function findField(fieldId) {
+      return getFields().find((field) => field.id === fieldId);
+    }
+
+    function pick(values) {
+      return values[Math.floor(Math.random() * values.length)];
+    }
+
+    function joinList(values, separator) {
+      if (!values || values.length === 0) {
+        return "";
+      }
+
+      return values.join(separator);
+    }
+
+    function persistState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (error) {
+        // file:// で開いた環境では保存できないことがある。操作自体は止めない。
+      }
+    }
+
+    function restoreState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) {
+          return;
+        }
+
+        const parsed = JSON.parse(saved);
+        state.values = parsed.values || {};
+        state.locked = parsed.locked || {};
+      } catch (error) {
+        state.values = {};
+        state.locked = {};
+      }
+    }
+
+    function setStatus(message) {
+      status.textContent = message;
+    }
+  </script>
+</body>
+</html>

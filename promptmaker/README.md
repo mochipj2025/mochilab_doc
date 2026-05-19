@@ -15,6 +15,26 @@ M.O.C.H.I. LABOのプロンプト制作ツール置き場です。
   - 生成されたキャラ要素と固定プロンプトを合体
   - 完成プロンプトをコピー
 
+### Image 2.0 キャラprompt maker
+
+5人の女子キャラを、リアル職業やファンタジー職へ短文で展開する試作品です。
+
+- 場所: `dev/image2-character-promptmaker.html`
+- 入口: `index.html`
+- できること:
+  - 新しいCharacter PromptMakerへ案内
+
+### Character Idea Maker
+
+ランダム生成と固定で、日本語のキャラクター設定メモを作る試作品です。
+
+- 場所: `dev/character-promptmaker/`
+- 入口: `index.html`
+- できること:
+  - 日本語UIから自然な日本語メモを生成
+  - カテゴリごとのランダム生成と固定
+  - コピー、リセット、localStorage保存
+
 ## Notes
 
 - `dev/` は開発中の試作品です。
