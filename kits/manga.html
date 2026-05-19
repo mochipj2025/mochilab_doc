@@ -24,7 +24,7 @@
 2. 小さな光に気づく
 3. 静かに歩き出す
 4. 背中だけが街の灯りに溶ける</textarea>
-        <div class="actions"><button class="primary" id="generate">Prompt生成</button><button class="quiet" id="sample">サンプルJSON</button></div>
+        <div class="actions"><button class="primary" id="generate">Prompt生成</button><button class="quiet" id="sample">サンプルJSON</button><button class="quiet" id="loadSaved">母艦から読み込む</button></div>
       </section>
       <section class="panel">
         <label for="output">生成結果</label><textarea class="output" id="output" readonly></textarea>
@@ -37,7 +37,8 @@
     const $=id=>document.getElementById(id); function readJson(){try{return JSON.parse($("jsonInput").value||"{}")}catch{return {}}} function compact(o){return JSON.stringify(o,null,2).replace(/[{}"]/g,"").split("\n").map(s=>s.trim()).filter(Boolean).slice(0,22).join("\n")}
     function generate(){const c=readJson();$("output").value=`縦スクロール漫画形式。\n${$("sceneCount").value}構成。\n${$("purpose").value}のシーン。\n${$("dialogue").value}。\n吹き出しを使いすぎず、表情と空気感で物語を伝える。\n\nキャラクター設定。\n${compact(c)||"キャラJSON未入力。静かなキャラクター。"}\n\n場面の流れ。\n${$("beats").value.trim()}\n\n全体の空気。\n静かな余白。\n雨、光、視線、背中で感情を見せる。\n日本語の短い詩を必要な場面だけに添える。`; $("status").textContent=""}
     async function copy(){ $("output").select(); document.execCommand("copy"); $("status").textContent="コピーしました"; }
-    $("generate").onclick=generate; $("copy").onclick=copy; $("clear").onclick=()=>$("output").value=""; $("sample").onclick=()=>{$("jsonInput").value=JSON.stringify(sample,null,2);generate()}; generate();
+    function loadSaved(){const saved=localStorage.getItem("characterPresetJson");if(saved){$("jsonInput").value=saved;generate();$("status").textContent="母艦のJSONを読み込みました"}else{$("status").textContent="保存されたJSONがありません"}}
+    $("generate").onclick=generate; $("copy").onclick=copy; $("clear").onclick=()=>$("output").value=""; $("sample").onclick=()=>{$("jsonInput").value=JSON.stringify(sample,null,2);generate()}; $("loadSaved").onclick=loadSaved; generate();
   </script>
 </body>
 </html>

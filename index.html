@@ -409,6 +409,11 @@
       gap: 10px;
     }
 
+    .meta-grid {
+      display: grid;
+      gap: 10px;
+    }
+
     .background-select {
       width: 100%;
       min-height: 50px;
@@ -552,6 +557,17 @@
       outline: 0;
     }
 
+    .json-panel {
+      border-top: 1px solid rgba(67, 78, 80, 0.12);
+    }
+
+    .json-output {
+      min-height: 260px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
     .result-actions {
       display: grid;
       gap: 10px;
@@ -588,7 +604,7 @@
       }
 
       .quick-actions {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
       }
 
       .preset-row {
@@ -609,6 +625,10 @@
 
       .button-row {
         grid-template-columns: 1.15fr 1fr 1fr;
+      }
+
+      .meta-grid {
+        grid-template-columns: 1fr 1fr 0.55fr;
       }
 
       .result-actions {
@@ -672,6 +692,8 @@
         <a class="kit-link" href="./kits/manga.html"><strong>Manga Scene Kit</strong><span>縦スクロール漫画を作る</span></a>
         <a class="kit-link" href="./kits/card.html"><strong>Character Card Kit</strong><span>キャラカードを作る</span></a>
         <a class="kit-link" href="./kits/three-view.html"><strong>Three View Kit</strong><span>三面図を作る</span></a>
+        <a class="kit-link" href="./kits/lp-assets.html"><strong>LP Asset Kit</strong><span>LP / OGP素材を作る</span></a>
+        <a class="kit-link" href="./kits/prompt-admin.html"><strong>Prompt Admin</strong><span>採用Promptを記録する</span></a>
       </nav>
     </header>
 
@@ -685,6 +707,7 @@
           <button class="btn btn-primary btn-small" type="button" data-action="generate">生成</button>
           <button class="btn btn-secondary btn-small" type="button" data-action="random">おまかせ</button>
           <button class="btn btn-quiet btn-small" type="button" data-action="copy">コピー</button>
+          <button class="btn btn-quiet btn-small" type="button" data-action="json">JSON化</button>
           <button class="btn btn-quiet btn-small" type="button" data-action="result">結果へ</button>
         </div>
         <div class="preset-row" aria-label="プリセット">
@@ -941,6 +964,36 @@
           </div>
         </details>
 
+        <details class="section" aria-labelledby="json-meta-title">
+          <summary>
+            <div class="summary-text">
+              <h2 class="section-title" id="json-meta-title">15. キャラJSONメモ</h2>
+              <p class="section-note">JSON資産として残すための名前、ID、メモを整えます。</p>
+            </div>
+            <span class="summary-marker" aria-hidden="true">+</span>
+          </summary>
+          <div class="section-body">
+            <div class="meta-grid">
+              <div class="text-field">
+                <label class="field-label" for="characterName">名前</label>
+                <input type="text" id="characterName" placeholder="例：灯 / Akari">
+              </div>
+              <div class="text-field">
+                <label class="field-label" for="characterId">character_id</label>
+                <input type="text" id="characterId" placeholder="例：akari_0020_cyber">
+              </div>
+              <div class="text-field">
+                <label class="field-label" for="characterVersion">version</label>
+                <input type="text" id="characterVersion" value="1.0.0">
+              </div>
+            </div>
+            <div class="text-field">
+              <label class="field-label" for="characterNotes">notes</label>
+              <textarea id="characterNotes" placeholder="例：LoRAなしでキャラJSONと採用Prompt履歴を育てる。"></textarea>
+            </div>
+          </div>
+        </details>
+
         <section class="section actions" aria-label="操作">
           <div class="button-row">
             <button class="btn btn-primary" type="button" id="generateButton">Prompt生成</button>
@@ -962,6 +1015,21 @@
           <button class="btn btn-primary" type="button" id="copyButton">Promptコピー</button>
           <button class="btn btn-quiet" type="button" id="clearOutputButton">結果を空にする</button>
         </div>
+        <section class="json-panel" aria-labelledby="json-title">
+          <div class="result-head">
+            <h2 class="result-title" id="json-title">キャラJSON</h2>
+            <p class="copy-status" id="jsonStatus" aria-live="polite"></p>
+          </div>
+          <div class="result-card">
+            <textarea class="prompt-output json-output" id="jsonOutput" aria-label="キャラクターJSON" placeholder="現在の設定をJSON化すると、ここに表示されます。"></textarea>
+          </div>
+          <div class="result-actions">
+            <button class="btn btn-primary" type="button" id="buildJsonButton">現在の設定をJSON化</button>
+            <button class="btn btn-quiet" type="button" id="copyJsonButton">JSONコピー</button>
+            <button class="btn btn-quiet" type="button" id="loadJsonButton">JSON読み込み</button>
+            <button class="btn btn-quiet" type="button" id="saveJsonButton">Kit用に保存</button>
+          </div>
+        </section>
       </aside>
     </div>
 
@@ -1378,8 +1446,14 @@
       backgroundFree: $("#backgroundFree"),
       framingFree: $("#framingFree"),
       poemInput: $("#poemInput"),
+      characterName: $("#characterName"),
+      characterId: $("#characterId"),
+      characterVersion: $("#characterVersion"),
+      characterNotes: $("#characterNotes"),
       promptOutput: $("#promptOutput"),
+      jsonOutput: $("#jsonOutput"),
       copyStatus: $("#copyStatus"),
+      jsonStatus: $("#jsonStatus"),
       statusMain: $("#statusMain"),
       statusSub: $("#statusSub")
     };
@@ -1492,6 +1566,24 @@
       return items.map(sentence).filter(Boolean).join("\n");
     }
 
+    function cleanItems(items) {
+      return items.map((item) => String(item || "").trim()).filter(Boolean);
+    }
+
+    function joined(items) {
+      return cleanItems(items).join("、");
+    }
+
+    function slugify(text) {
+      const value = String(text || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "_")
+        .replace(/_+/g, "_");
+      return value || `character_${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`;
+    }
+
     function naturalActionBlock(items) {
       if (!items.length) return lineBlock(["静かに佇んでいる"]);
       if (items.length === 1) return lineBlock(items);
@@ -1596,6 +1688,59 @@
 
       blocks.push(`『${parts.poem}』`);
       return blocks.filter(Boolean).join("\n\n");
+    }
+
+    function buildCharacterJson() {
+      const parts = getPromptParts();
+      const prompt = getPromptOutput() || buildPrompt();
+      const name = elements.characterName.value.trim() || "未命名のキャラクター";
+      const characterId = elements.characterId.value.trim() || slugify(name);
+      return {
+        character_id: characterId,
+        name,
+        version: elements.characterVersion.value.trim() || "1.0.0",
+        visual_lock: {
+          proportion: joined(parts.proportions),
+          hair: joined(parts.hair),
+          eyes: joined(parts.eyes),
+          expression: joined(parts.expressions),
+          accessories: joined(parts.accessories),
+          outfit: joined(parts.outfits)
+        },
+        personality: cleanItems(parts.personalities),
+        world: {
+          place: joined(parts.backgrounds),
+          light: isPhotoStyle(parts.style) ? joined(parts.extras) : "",
+          tone: joined(parts.worlds)
+        },
+        scene_defaults: {
+          background: joined(parts.backgrounds),
+          lighting: isPhotoStyle(parts.style) ? joined(parts.extras) : "",
+          framing: joined(parts.framings),
+          style: parts.style,
+          output_type: parts.outputType
+        },
+        poem_seeds: cleanItems([parts.poem]),
+        avoid: [
+          "品質呪文",
+          "過剰な装飾",
+          "強い広告表現",
+          "医療的な効能や診断表現"
+        ],
+        notes: elements.characterNotes.value.trim(),
+        adopted_prompts: [],
+        latest_prompt: prompt
+      };
+    }
+
+    function buildJsonOutput() {
+      const jsonText = JSON.stringify(buildCharacterJson(), null, 2);
+      elements.jsonOutput.value = jsonText;
+      elements.jsonStatus.textContent = "JSON化しました";
+      window.setTimeout(() => {
+        elements.jsonStatus.textContent = "";
+      }, 2200);
+      return jsonText;
     }
 
     function setPromptOutput(text) {
@@ -1704,6 +1849,15 @@
       });
     }
 
+    function setKnownValues(name, values, freeElement) {
+      const list = cleanItems(Array.isArray(values) ? values : String(values || "").split(/、|,/));
+      const known = Array.from(document.querySelectorAll(`input[name="${name}"]`)).map((input) => input.value);
+      const checked = list.filter((item) => known.includes(item));
+      const free = list.filter((item) => !known.includes(item));
+      setCheckedValues(name, checked);
+      if (freeElement) freeElement.value = free.join("、");
+    }
+
     function setRadioValue(name, value) {
       const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
       if (input) input.checked = true;
@@ -1721,6 +1875,20 @@
 
     function setFraming(framing) {
       setRadioValue("framing", framing);
+    }
+
+    function setKnownRadio(name, value, freeElement) {
+      const text = String(value || "").trim();
+      const first = text.split(/、|,/).map((item) => item.trim()).filter(Boolean)[0] || "";
+      const input = document.querySelector(`input[name="${name}"][value="${first}"]`);
+      if (input) {
+        input.checked = true;
+        if (freeElement) {
+          freeElement.value = text.split(/、|,/).slice(1).map((item) => item.trim()).filter(Boolean).join("、");
+        }
+      } else if (freeElement) {
+        freeElement.value = text;
+      }
     }
 
     function openCoreSections() {
@@ -1827,11 +1995,11 @@
       generatePrompt();
     }
 
-    function fallbackCopyText(text) {
-      if (elements.promptOutput) {
-        elements.promptOutput.focus();
-        elements.promptOutput.select();
-        elements.promptOutput.setSelectionRange(0, text.length);
+    function fallbackCopyText(text, sourceElement = elements.promptOutput) {
+      if (sourceElement) {
+        sourceElement.focus();
+        sourceElement.select();
+        sourceElement.setSelectionRange(0, text.length);
         if (document.execCommand("copy")) {
           return;
         }
@@ -1855,38 +2023,111 @@
       }
     }
 
-    async function copyPrompt() {
-      const text = getPromptOutput() || buildPrompt();
-      setPromptOutput(text);
-
+    async function copyText(text, statusElement, sourceElement) {
       try {
         if (navigator.clipboard && window.isSecureContext) {
           await navigator.clipboard.writeText(text);
         } else {
-          elements.promptOutput.focus();
-          elements.promptOutput.select();
-          elements.promptOutput.setSelectionRange(0, text.length);
-          fallbackCopyText(text);
+          fallbackCopyText(text, sourceElement);
         }
-        elements.copyStatus.textContent = "コピーしました";
+        statusElement.textContent = "コピーしました";
       } catch (error) {
         try {
-          elements.promptOutput.focus();
-          elements.promptOutput.select();
-          elements.promptOutput.setSelectionRange(0, text.length);
-          fallbackCopyText(text);
-          elements.copyStatus.textContent = "コピーしました";
+          fallbackCopyText(text, sourceElement);
+          statusElement.textContent = "コピーしました";
         } catch (fallbackError) {
-          elements.promptOutput.focus();
-          elements.promptOutput.select();
-          elements.promptOutput.setSelectionRange(0, text.length);
-          elements.copyStatus.textContent = "コピーできませんでした。テキストを選択しました。";
+          if (sourceElement) {
+            sourceElement.focus();
+            sourceElement.select();
+            sourceElement.setSelectionRange(0, text.length);
+          }
+          statusElement.textContent = "コピーできませんでした。テキストを選択しました。";
         }
       }
 
       window.setTimeout(() => {
-        elements.copyStatus.textContent = "";
+        statusElement.textContent = "";
       }, 2200);
+    }
+
+    async function copyPrompt() {
+      const text = getPromptOutput() || buildPrompt();
+      setPromptOutput(text);
+      await copyText(text, elements.copyStatus, elements.promptOutput);
+    }
+
+    async function copyJson() {
+      const text = elements.jsonOutput.value.trim() || buildJsonOutput();
+      await copyText(text, elements.jsonStatus, elements.jsonOutput);
+    }
+
+    function readJsonOutput() {
+      try {
+        return JSON.parse(elements.jsonOutput.value || "{}");
+      } catch (error) {
+        elements.jsonStatus.textContent = "JSONを読み取れませんでした";
+        window.setTimeout(() => {
+          elements.jsonStatus.textContent = "";
+        }, 2400);
+        return null;
+      }
+    }
+
+    function loadCharacterJson() {
+      const data = readJsonOutput();
+      if (!data) return;
+      const visual = data.visual_lock || {};
+      const scene = data.scene_defaults || {};
+      const world = data.world || {};
+
+      elements.characterName.value = data.name || "";
+      elements.characterId.value = data.character_id || "";
+      elements.characterVersion.value = data.version || "1.0.0";
+      elements.characterNotes.value = data.notes || "";
+
+      setKnownRadio("proportion", visual.proportion, elements.proportionFree);
+      setKnownValues("hair", visual.hair, elements.hairFree);
+      setKnownValues("eye", visual.eyes, elements.eyeFree);
+      setKnownValues("expression", visual.expression, elements.expressionFree);
+      setKnownValues("accessory", visual.accessories, elements.accessoryFree);
+      setKnownValues("outfit", visual.outfit, elements.outfitFree);
+      setKnownValues("personality", data.personality || [], elements.personalityFree);
+      setKnownValues("world", [world.tone, world.place].filter(Boolean), elements.worldFree);
+
+      const background = scene.background || world.place || "";
+      if (backgrounds.includes(background)) {
+        elements.backgroundSelect.value = background;
+        elements.backgroundFree.value = "";
+      } else {
+        elements.backgroundSelect.value = "";
+        elements.backgroundFree.value = background;
+      }
+
+      setStyle(scene.style || defaults.style);
+      setOutputType(scene.output_type || defaults.outputType);
+      setKnownRadio("framing", scene.framing, elements.framingFree);
+      elements.poemInput.value = Array.isArray(data.poem_seeds) ? data.poem_seeds[0] || "" : "";
+      updatePhotoOptions();
+      setKnownValues("photoExtra", scene.lighting || world.light || "", null);
+      setPromptOutput(data.latest_prompt || buildPrompt());
+      elements.jsonStatus.textContent = "JSONを読み込みました";
+      updateStatus();
+      window.setTimeout(() => {
+        elements.jsonStatus.textContent = "";
+      }, 2200);
+    }
+
+    function saveJsonForKits() {
+      const text = elements.jsonOutput.value.trim() || buildJsonOutput();
+      try {
+        localStorage.setItem("characterPresetJson", text);
+        elements.jsonStatus.textContent = "Kit用に保存しました";
+      } catch (error) {
+        elements.jsonStatus.textContent = "保存できませんでした。JSONコピーを使ってください。";
+      }
+      window.setTimeout(() => {
+        elements.jsonStatus.textContent = "";
+      }, 2400);
     }
 
     function updatePhotoOptions() {
@@ -1904,6 +2145,10 @@
       $("#resetButton").addEventListener("click", resetForm);
       $("#randomPoemButton").addEventListener("click", randomizePoem);
       $("#copyButton").addEventListener("click", copyPrompt);
+      $("#buildJsonButton").addEventListener("click", buildJsonOutput);
+      $("#copyJsonButton").addEventListener("click", copyJson);
+      $("#loadJsonButton").addEventListener("click", loadCharacterJson);
+      $("#saveJsonButton").addEventListener("click", saveJsonForKits);
       $("#clearOutputButton").addEventListener("click", () => {
         setPromptOutput("");
         elements.copyStatus.textContent = "";
@@ -1923,6 +2168,10 @@
             scrollToResult();
           }
           if (action === "copy") copyPrompt();
+          if (action === "json") {
+            buildJsonOutput();
+            scrollToResult();
+          }
           if (action === "result") scrollToResult();
         });
       });

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt Admin</title>
+  <style>
+    :root {
+      --paper: #f3eadc;
+      --ink: #1f2528;
+      --muted: #667174;
+      --deep: #173946;
+      --line: rgba(67, 78, 80, .16);
+      --brown: #7a5c3e;
+      --soft: #fffaf2;
+      --quiet: #eadac7;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.8; }
+    main { width: min(100% - 28px, 1120px); margin: 0 auto; padding: 34px 0 56px; }
+    header { display: grid; gap: 12px; padding: 20px 0 24px; }
+    h1 { margin: 0; color: var(--deep); font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: clamp(2rem, 8vw, 3.5rem); line-height: 1.2; }
+    h2 { margin: 0; color: var(--deep); font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 1.2rem; font-weight: 600; }
+    h3 { margin: 0; color: var(--deep); font-size: .98rem; }
+    p { margin: 0; color: var(--muted); }
+    a { color: var(--brown); font-weight: 700; }
+    label { display: block; color: var(--deep); font-weight: 800; margin-bottom: 7px; }
+    textarea, input, select { width: 100%; border: 1px solid var(--line); border-radius: 14px; background: #fffdf8; color: var(--ink); padding: 12px 13px; font: inherit; }
+    textarea { min-height: 112px; resize: vertical; }
+    button { min-height: 48px; border: 0; border-radius: 999px; padding: 10px 16px; font-weight: 800; cursor: pointer; }
+    .primary { background: var(--deep); color: #fffaf2; }
+    .quiet { background: var(--quiet); color: #4f3924; }
+    .panel { border: 1px solid var(--line); border-radius: 22px; background: rgba(255, 250, 242, .88); padding: 18px; box-shadow: 0 14px 34px rgba(45, 55, 55, .08); }
+    .workspace { display: grid; gap: 16px; }
+    .step-grid { display: grid; gap: 12px; }
+    .step { display: grid; gap: 10px; }
+    .step-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .step-num { color: var(--brown); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .actions { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-top: 12px; }
+    .row { display: grid; gap: 10px; grid-template-columns: 1fr; }
+    .tabs { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; padding: 4px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 253, 248, .7); }
+    .tab { min-height: 44px; background: transparent; color: var(--deep); }
+    .tab.is-active { background: var(--deep); color: #fffaf2; }
+    .mode-panel { display: none; margin-top: 14px; }
+    .mode-panel.is-active { display: grid; gap: 12px; }
+    .prompt { min-height: 210px; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 2; }
+    .json-wrap { margin-top: 12px; }
+    .json { min-height: 220px; font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: .88rem; line-height: 1.7; }
+    details.json-details { margin-top: 12px; }
+    details.json-details summary { color: var(--deep); cursor: pointer; font-weight: 800; }
+    .status { min-height: 1.5em; color: var(--brown); font-weight: 800; font-size: .9rem; }
+    .summary-grid { display: grid; gap: 10px; }
+    .item { border: 1px solid var(--line); border-radius: 14px; background: #fffdf8; padding: 12px; color: var(--muted); font-size: .92rem; }
+    .item strong { display: block; color: var(--deep); }
+    .empty { color: var(--muted); font-size: .92rem; }
+    @media (min-width: 880px) {
+      .workspace { grid-template-columns: minmax(0, .9fr) minmax(420px, 1.1fr); align-items: start; }
+      .row { grid-template-columns: 1fr 1fr 1fr; }
+      .actions { grid-template-columns: repeat(4, 1fr); }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <a href="../index.html">← Character Preset Maker に戻る</a>
+      <h1>Prompt Admin</h1>
+      <p>キャラJSONに、採用Promptとアイテムを迷わず追加します。</p>
+    </header>
+
+    <div class="workspace">
+      <section class="panel step-grid" aria-label="JSONの読み込みと保存">
+        <div class="step">
+          <div class="step-head">
+            <span class="step-num">Step 1</span>
+            <h2>キャラJSONを読む</h2>
+          </div>
+          <p>まず母艦で保存したJSONを読み込みます。貼り付け編集もできます。</p>
+          <div class="actions">
+            <button class="primary" id="loadSaved">母艦から読み込む</button>
+            <button class="quiet" id="sample">サンプルJSON</button>
+            <button class="quiet" id="copyJson">JSONコピー</button>
+            <button class="quiet" id="saveJson">Kit用に保存</button>
+          </div>
+          <p class="status" id="status" aria-live="polite"></p>
+          <details class="json-details">
+            <summary>JSONを表示 / 編集</summary>
+            <div class="json-wrap">
+              <label for="jsonInput">キャラJSON</label>
+              <textarea class="json" id="jsonInput" placeholder="キャラJSONを貼り付け"></textarea>
+            </div>
+          </details>
+        </div>
+
+        <div class="step">
+          <div class="step-head">
+            <span class="step-num">Current</span>
+            <h2>保存内容</h2>
+          </div>
+          <div class="summary-grid" id="summary"></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="追加フォーム">
+        <div class="step-head">
+          <span class="step-num">Step 2</span>
+          <h2>追加するものを選ぶ</h2>
+        </div>
+        <div class="tabs" role="tablist" aria-label="追加する内容">
+          <button class="tab is-active" type="button" id="promptTab" data-mode="prompt" role="tab" aria-selected="true" aria-controls="promptPanel">採用Prompt</button>
+          <button class="tab" type="button" id="itemTab" data-mode="item" role="tab" aria-selected="false" aria-controls="itemPanel">アイテム</button>
+        </div>
+
+        <section class="mode-panel is-active" id="promptPanel" role="tabpanel" aria-labelledby="promptTab">
+          <p>良い画像につながったPromptだけを履歴に残します。</p>
+          <div class="row">
+            <div><label for="kit">Kit</label><select id="kit"><option>Character Preset Maker</option><option>Photo Book Kit</option><option>Manga Scene Kit</option><option>Character Card Kit</option><option>Three View Kit</option><option>Landing Page Asset Kit</option></select></div>
+            <div><label for="outputType">用途</label><input id="outputType" value="キャラカード化"></div>
+            <div><label for="promptId">prompt_id</label><input id="promptId" placeholder="自動生成でも可"></div>
+          </div>
+          <label for="prompt">採用Prompt</label><textarea class="prompt" id="prompt" placeholder="採用したPromptを貼り付け"></textarea>
+          <label for="resultNote">結果メモ</label><textarea id="resultNote" placeholder="例：表情と衣装の一貫性が高い。カード用に採用。"></textarea>
+          <label for="imageRef">image_ref</label><input id="imageRef" placeholder="画像ファイル名、URL、管理メモなど">
+          <div class="actions"><button class="primary" id="addPrompt">採用Promptを追加</button><button class="quiet" id="clearForm">入力を空にする</button></div>
+        </section>
+
+        <section class="mode-panel" id="itemPanel" role="tabpanel" aria-labelledby="itemTab">
+          <p>小物、衣装パーツ、背景アイテムなど、キャラの一貫性を支えるものを残します。</p>
+          <div class="row">
+            <div><label for="itemName">アイテム名</label><input id="itemName" placeholder="例：黒いチョーカー"></div>
+            <div><label for="itemCategory">カテゴリ</label><select id="itemCategory"><option>accessory</option><option>outfit_part</option><option>prop</option><option>background_item</option><option>symbol</option><option>vehicle</option><option>other</option></select></div>
+            <div><label for="itemId">item_id</label><input id="itemId" placeholder="自動生成でも可"></div>
+          </div>
+          <label for="itemVisual">見た目の固定メモ</label><textarea id="itemVisual" placeholder="例：細い黒革、中央に小さな銀色の金具、首元にぴったり沿う。"></textarea>
+          <label for="itemUsage">使い方メモ</label><textarea id="itemUsage" placeholder="例：キャラカードと三面図では必ず表示。写真集ではディテールカットに使う。"></textarea>
+          <label for="itemPromptNote">Prompt用メモ</label><textarea id="itemPromptNote" placeholder="例：quiet black leather choker with a small silver clasp, understated design"></textarea>
+          <div class="row">
+            <div><label for="itemAvoid">避ける表現</label><input id="itemAvoid" placeholder="例：派手な宝石、大きな装飾"></div>
+            <div><label for="itemImageRef">image_ref</label><input id="itemImageRef" placeholder="画像ファイル名、URL、管理メモなど"></div>
+            <div><label for="itemNote">notes</label><input id="itemNote" placeholder="運用メモ"></div>
+          </div>
+          <div class="actions"><button class="primary" id="addItem">アイテムを追加</button><button class="quiet" id="clearItemForm">アイテム入力を空にする</button></div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const sample = { character_id: "akari_0020_cyber", name: "灯 / Akari", version: "1.0.0", visual_lock: { proportion: "7頭身", hair: "黒髪、長めの前髪", eyes: "静かな目", expression: "無口で静かな表情", accessories: "黒いチョーカー", outfit: "黒い雨用ジャケット" }, personality: ["静かな性格"], world: { place: "雨の夜の都市", light: "青い都市光", tone: "暗く静か" }, scene_defaults: { background: "雨の夜の街", lighting: "青い都市光", framing: "全身", style: "フォトリアル", output_type: "1枚絵" }, poem_seeds: ["小さな光だけが、帰り道を覚えていた。"], avoid: ["品質呪文", "過剰な装飾"], notes: "", items: [], adopted_prompts: [] };
+    const $ = (id) => document.getElementById(id);
+    function today() { return new Date().toISOString().slice(0, 10); }
+    function readJson() { try { return JSON.parse($("jsonInput").value || "{}"); } catch { $("status").textContent = "JSONを読み取れませんでした"; return null; } }
+    function writeJson(data) { $("jsonInput").value = JSON.stringify(data, null, 2); renderSummary(data); }
+    function slug(text) { return String(text || "prompt").trim().toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "_").replace(/_+/g, "_") || "prompt"; }
+    function makePromptId(data) { const base = slug(data.character_id || data.name || "character"); const kit = slug($("kit").value).replace(/_kit$/, ""); const next = String(((data.adopted_prompts || []).length) + 1).padStart(3, "0"); return `${base}_${kit}_${next}`; }
+    function makeItemId(data) { const base = slug(data.character_id || data.name || "character"); const name = slug($("itemName").value || "item"); const next = String(((data.items || []).length) + 1).padStart(3, "0"); return `${base}_${name}_${next}`; }
+    function splitList(text) { return String(text || "").split(/、|,/).map((item) => item.trim()).filter(Boolean); }
+    function card(title, body) { return `<div class="item"><strong>${title}</strong>${body}</div>`; }
+    function renderSummary(data = readJson()) {
+      const prompts = data && Array.isArray(data.adopted_prompts) ? data.adopted_prompts : [];
+      const items = data && Array.isArray(data.items) ? data.items : [];
+      const characterName = data && data.name ? data.name : "キャラ未読み込み";
+      const promptList = prompts.length ? prompts.slice().reverse().slice(0, 3).map((item) => card(`${item.prompt_id || "prompt"} / ${item.kit || ""}`, `${item.date || ""} / ${item.output_type || ""}<br>${item.result_note || ""}`)).join("") : '<p class="empty">採用Promptはまだありません。</p>';
+      const itemList = items.length ? items.slice().reverse().slice(0, 3).map((item) => card(`${item.item_id || "item"} / ${item.name || ""}`, `${item.category || ""}<br>${item.visual_note || ""}`)).join("") : '<p class="empty">アイテムはまだありません。</p>';
+      $("summary").innerHTML = `
+        ${card("現在のキャラ", `${characterName}<br>Prompt ${prompts.length}件 / Item ${items.length}件`)}
+        <div><h3>最近の採用Prompt</h3>${promptList}</div>
+        <div><h3>最近のアイテム</h3>${itemList}</div>
+      `;
+    }
+    function addPrompt() {
+      const data = readJson();
+      if (!data) return;
+      const prompt = $("prompt").value.trim();
+      if (!prompt) { $("status").textContent = "採用Promptを入力してください"; return; }
+      if (!Array.isArray(data.adopted_prompts)) data.adopted_prompts = [];
+      data.adopted_prompts.push({ prompt_id: $("promptId").value.trim() || makePromptId(data), date: today(), kit: $("kit").value, output_type: $("outputType").value.trim(), prompt, result_note: $("resultNote").value.trim(), image_ref: $("imageRef").value.trim() });
+      writeJson(data);
+      $("status").textContent = "採用Promptを追加しました。最後に保存してください。";
+    }
+    function addItem() {
+      const data = readJson();
+      if (!data) return;
+      const name = $("itemName").value.trim();
+      if (!name) { $("status").textContent = "アイテム名を入力してください"; return; }
+      if (!Array.isArray(data.items)) data.items = [];
+      data.items.push({ item_id: $("itemId").value.trim() || makeItemId(data), name, category: $("itemCategory").value, visual_note: $("itemVisual").value.trim(), usage_note: $("itemUsage").value.trim(), prompt_note: $("itemPromptNote").value.trim(), avoid: splitList($("itemAvoid").value), image_ref: $("itemImageRef").value.trim(), notes: $("itemNote").value.trim() });
+      writeJson(data);
+      $("status").textContent = "アイテムを追加しました。最後に保存してください。";
+    }
+    async function copyJson() {
+      const text = $("jsonInput").value.trim();
+      if (!text) { $("status").textContent = "コピーするJSONがありません"; return; }
+      try { await navigator.clipboard.writeText(text); $("status").textContent = "JSONをコピーしました"; } catch { $("jsonInput").select(); document.execCommand("copy"); $("status").textContent = "JSONをコピーしました"; }
+    }
+    function saveJson() { const text = $("jsonInput").value.trim(); if (!text) { $("status").textContent = "保存するJSONがありません"; return; } localStorage.setItem("characterPresetJson", text); $("status").textContent = "Kit用に保存しました"; }
+    function loadSaved() { const saved = localStorage.getItem("characterPresetJson"); if (saved) { $("jsonInput").value = saved; renderSummary(); $("status").textContent = "母艦のJSONを読み込みました"; } else { $("status").textContent = "保存されたJSONがありません"; renderSummary({}); } }
+    function setMode(mode) {
+      document.querySelectorAll(".tab").forEach((button) => {
+        const active = button.dataset.mode === mode;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      $("promptPanel").classList.toggle("is-active", mode === "prompt");
+      $("itemPanel").classList.toggle("is-active", mode === "item");
+    }
+    document.querySelectorAll(".tab").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+    $("loadSaved").onclick = loadSaved;
+    $("sample").onclick = () => { writeJson(sample); $("status").textContent = "サンプルJSONを読み込みました"; };
+    $("copyJson").onclick = copyJson;
+    $("saveJson").onclick = saveJson;
+    $("addPrompt").onclick = addPrompt;
+    $("addItem").onclick = addItem;
+    $("clearForm").onclick = () => { ["promptId", "prompt", "resultNote", "imageRef"].forEach((id) => $(id).value = ""); $("status").textContent = ""; };
+    $("clearItemForm").onclick = () => { ["itemName", "itemId", "itemVisual", "itemUsage", "itemPromptNote", "itemAvoid", "itemImageRef", "itemNote"].forEach((id) => $(id).value = ""); $("status").textContent = ""; };
+    $("jsonInput").addEventListener("input", () => renderSummary());
+    loadSaved();
+  </script>
+</body>
+</html>

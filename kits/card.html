@@ -16,7 +16,7 @@
         <label for="jsonInput">キャラJSON</label><textarea id="jsonInput" placeholder="キャラJSONを貼り付け"></textarea>
         <div class="row"><div><label for="name">表示名</label><input id="name" value="灯 / Akari"></div><div><label for="note">メモ</label><input id="note" value="夜の匂いと、光のノイズ。"></div></div>
         <label for="fields">カードに入れる欄</label><textarea id="fields">NAME / AGE / HEIGHT / NOTE / STYLE / PERSONALITY / MEMO</textarea>
-        <div class="actions"><button class="primary" id="generate">Prompt生成</button><button class="quiet" id="sample">サンプルJSON</button></div>
+        <div class="actions"><button class="primary" id="generate">Prompt生成</button><button class="quiet" id="sample">サンプルJSON</button><button class="quiet" id="loadSaved">母艦から読み込む</button></div>
       </section>
       <section class="panel">
         <label for="output">生成結果</label><textarea class="output" id="output" readonly></textarea>
@@ -29,7 +29,8 @@
     const $=id=>document.getElementById(id);function readJson(){try{return JSON.parse($("jsonInput").value||"{}")}catch{return {}}}function compact(o){return JSON.stringify(o,null,2).replace(/[{}"]/g,"").split("\n").map(s=>s.trim()).filter(Boolean).slice(0,24).join("\n")}
     function generate(){const c=readJson();$("output").value=`キャラクターカード形式。\n日本語の編集デザイン。\n写真と設定欄を持つ、余白のある紙面。\n\n表示名。\n${$("name").value}\n\nキャラクター設定。\n${compact(c)||"キャラJSON未入力。静かなキャラクター。"}\n\nカード欄。\n${$("fields").value.trim()}\n\nレイアウト。\n左側に大きなキャラクター写真。\n右側に設定欄。\n下部にディテールカットを3枚。\n細い罫線、薄い紙の質感、落ち着いた余白。\n\nMEMO。\n${$("note").value}`;$("status").textContent=""}
     async function copy(){$("output").select();document.execCommand("copy");$("status").textContent="コピーしました"}
-    $("generate").onclick=generate;$("copy").onclick=copy;$("clear").onclick=()=>$("output").value="";$("sample").onclick=()=>{$("jsonInput").value=JSON.stringify(sample,null,2);generate()};generate();
+    function loadSaved(){const saved=localStorage.getItem("characterPresetJson");if(saved){$("jsonInput").value=saved;generate();$("status").textContent="母艦のJSONを読み込みました"}else{$("status").textContent="保存されたJSONがありません"}}
+    $("generate").onclick=generate;$("copy").onclick=copy;$("clear").onclick=()=>$("output").value="";$("sample").onclick=()=>{$("jsonInput").value=JSON.stringify(sample,null,2);generate()};$("loadSaved").onclick=loadSaved;generate();
   </script>
 </body>
 </html>

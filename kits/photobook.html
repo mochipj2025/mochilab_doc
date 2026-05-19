@@ -48,6 +48,7 @@
         <div class="actions">
           <button class="primary" id="generate">Prompt生成</button>
           <button class="quiet" id="sample">サンプルJSON</button>
+          <button class="quiet" id="loadSaved">母艦から読み込む</button>
         </div>
       </section>
       <section class="panel">
@@ -72,7 +73,8 @@
       $("status").textContent = "";
     }
     async function copy(){ $("output").select(); document.execCommand("copy"); $("status").textContent = "コピーしました"; }
-    $("generate").onclick = generate; $("copy").onclick = copy; $("clear").onclick = () => $("output").value = ""; $("sample").onclick = () => { $("jsonInput").value = JSON.stringify(sample,null,2); generate(); };
+    function loadSaved(){ const saved = localStorage.getItem("characterPresetJson"); if(saved){ $("jsonInput").value = saved; generate(); $("status").textContent = "母艦のJSONを読み込みました"; } else { $("status").textContent = "保存されたJSONがありません"; } }
+    $("generate").onclick = generate; $("copy").onclick = copy; $("clear").onclick = () => $("output").value = ""; $("sample").onclick = () => { $("jsonInput").value = JSON.stringify(sample,null,2); generate(); }; $("loadSaved").onclick = loadSaved;
     generate();
   </script>
 </body>

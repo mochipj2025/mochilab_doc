@@ -16,7 +16,7 @@
         <label for="jsonInput">キャラJSON</label><textarea id="jsonInput" placeholder="キャラJSONを貼り付け"></textarea>
         <div class="row"><div><label for="style">画風</label><select id="style"><option>フォトリアル</option><option>日本の漫画調イラスト</option><option>日本のアニメ調イラスト</option></select></div><div><label for="background">背景</label><input id="background" value="雨の夜の都市、同じ背景で統一"></div></div>
         <label for="focus">固定したい特徴</label><textarea id="focus">髪型、顔、衣装、靴、アクセサリーを三方向で一致させる。</textarea>
-        <div class="actions"><button class="primary" id="generate">Prompt生成</button><button class="quiet" id="sample">サンプルJSON</button></div>
+        <div class="actions"><button class="primary" id="generate">Prompt生成</button><button class="quiet" id="sample">サンプルJSON</button><button class="quiet" id="loadSaved">母艦から読み込む</button></div>
       </section>
       <section class="panel">
         <label for="output">生成結果</label><textarea class="output" id="output" readonly></textarea>
@@ -29,7 +29,8 @@
     const $=id=>document.getElementById(id);function readJson(){try{return JSON.parse($("jsonInput").value||"{}")}catch{return {}}}function compact(o){return JSON.stringify(o,null,2).replace(/[{}"]/g,"").split("\n").map(s=>s.trim()).filter(Boolean).slice(0,22).join("\n")}
     function generate(){const c=readJson();$("output").value=`キャラクター三面図。\n${$("style").value}。\n正面、横、背面を横並びにする。\n同じキャラクター、同じ衣装、同じ髪型、同じ体格で統一。\n\nキャラクター設定。\n${compact(c)||"キャラJSON未入力。静かなキャラクター。"}\n\n背景。\n${$("background").value}\n\n固定したい特徴。\n${$("focus").value.trim()}\n\n構成。\n左。正面立ち姿。\n中央。横向きの立ち姿。\n右。背面の立ち姿。\n余白のある設定資料風レイアウト。\n衣装とシルエットが確認しやすい。`; $("status").textContent=""}
     async function copy(){$("output").select();document.execCommand("copy");$("status").textContent="コピーしました"}
-    $("generate").onclick=generate;$("copy").onclick=copy;$("clear").onclick=()=>$("output").value="";$("sample").onclick=()=>{$("jsonInput").value=JSON.stringify(sample,null,2);generate()};generate();
+    function loadSaved(){const saved=localStorage.getItem("characterPresetJson");if(saved){$("jsonInput").value=saved;generate();$("status").textContent="母艦のJSONを読み込みました"}else{$("status").textContent="保存されたJSONがありません"}}
+    $("generate").onclick=generate;$("copy").onclick=copy;$("clear").onclick=()=>$("output").value="";$("sample").onclick=()=>{$("jsonInput").value=JSON.stringify(sample,null,2);generate()};$("loadSaved").onclick=loadSaved;generate();
   </script>
 </body>
 </html>

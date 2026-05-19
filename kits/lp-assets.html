@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Landing Page Asset Kit</title>
+  <style>
+    :root{--paper:#f3eadc;--ink:#1f2528;--muted:#667174;--deep:#173946;--line:rgba(67,78,80,.16);--brown:#7a5c3e}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.8}main{width:min(100% - 28px,1080px);margin:0 auto;padding:34px 0 56px}header{display:grid;gap:12px;padding:20px 0 28px}h1{margin:0;color:var(--deep);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:clamp(2rem,8vw,3.5rem);line-height:1.2}p{margin:0;color:var(--muted)}a{color:var(--brown);font-weight:700}.grid{display:grid;gap:16px}.panel{border:1px solid var(--line);border-radius:22px;background:rgba(255,250,242,.88);padding:18px;box-shadow:0 14px 34px rgba(45,55,55,.08)}label{display:block;color:var(--deep);font-weight:800;margin-bottom:7px}textarea,input,select{width:100%;border:1px solid var(--line);border-radius:14px;background:#fffdf8;color:var(--ink);padding:12px 13px;font:inherit}textarea{min-height:130px;resize:vertical}.output{min-height:390px;font-family:"Hiragino Mincho ProN","Yu Mincho",serif;line-height:2}.row{display:grid;gap:10px;grid-template-columns:1fr}.actions{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:12px}button{min-height:48px;border:0;border-radius:999px;padding:10px 16px;font-weight:800;cursor:pointer}.primary{background:var(--deep);color:#fffaf2}.quiet{background:#eadac7;color:#4f3924}.status{min-height:1.5em;color:var(--brown);font-weight:800;font-size:.9rem}@media(min-width:820px){.grid{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <main>
+    <header><a href="../index.html">← Character Preset Maker に戻る</a><h1>Landing Page Asset Kit</h1><p>キャラJSONから、LP、OGP、noteサムネ、SNS画像向けのPromptを作ります。</p></header>
+    <div class="grid">
+      <section class="panel">
+        <label for="jsonInput">キャラJSON</label><textarea id="jsonInput" placeholder="キャラJSONを貼り付け"></textarea>
+        <div class="row">
+          <div><label for="assetType">出力素材</label><select id="assetType"><option>LPヒーロー画像</option><option>ファーストビュー背景</option><option>セクション背景</option><option>サービス紹介ビジュアル</option><option>キャラクター案内画像</option><option>CTA画像</option><option>OGP画像</option><option>noteサムネイル</option><option>SNS告知画像</option><option>バナー</option></select></div>
+          <div><label for="ratio">比率</label><select id="ratio"><option>16:9</option><option>1.91:1</option><option>4:5</option><option>1:1</option><option>9:16</option></select></div>
+        </div>
+        <label for="message">載せたい言葉</label><textarea id="message">静かに戻れる創作の場所。</textarea>
+        <label for="usage">使う場所のメモ</label><input id="usage" value="日本語ミニマル編集デザインのLP素材">
+        <div class="actions"><button class="primary" id="generate">Prompt生成</button><button class="quiet" id="sample">サンプルJSON</button><button class="quiet" id="loadSaved">母艦から読み込む</button></div>
+      </section>
+      <section class="panel">
+        <label for="output">生成結果</label><textarea class="output" id="output" readonly></textarea>
+        <div class="actions"><button class="primary" id="copy">コピー</button><button class="quiet" id="clear">消す</button></div><p class="status" id="status"></p>
+      </section>
+    </div>
+  </main>
+  <script>
+    const sample={name:"灯 / Akari",visual_lock:{hair:"黒髪、長めの前髪",eyes:"静かな目",outfit:"黒い雨用ジャケット、チョーカー、厚底ブーツ"},world:{place:"雨の夜の都市",light:"青い都市光",tone:"静かで湿度のある空気"},scene_defaults:{style:"フォトリアル",background:"雨の夜の都市"}};
+    const $=id=>document.getElementById(id);function readJson(){try{return JSON.parse($("jsonInput").value||"{}")}catch{return {}}}function compact(o){return JSON.stringify(o,null,2).replace(/[{}"]/g,"").split("\n").map(s=>s.trim()).filter(Boolean).slice(0,24).join("\n")}
+    function generate(){const c=readJson();$("output").value=`${$("assetType").value}用ビジュアル。\n比率は${$("ratio").value}。\n${$("usage").value}。\n\nキャラクター設定。\n${compact(c)||"キャラJSON未入力。静かな案内役キャラクター。"}\n\n画面の考え方。\nブランドやサービスの第一印象を静かに伝える。\n余白を広く取り、文字が載る領域を残す。\n強い広告表現にしない。\n医療的な効能や診断表現にしない。\n日本語ミニマル編集デザイン。\n深海のような静けさ、やわらかい光、清潔な情報整理。\n\n入れる言葉。\n${$("message").value.trim()}\n\n仕上げ。\nキャラクターは主張しすぎず、世界観の案内役として配置する。\n背景は暗く潰しすぎず、SNSやLPで文字が読みやすい明度を残す。`;$("status").textContent=""}
+    async function copy(){$("output").select();document.execCommand("copy");$("status").textContent="コピーしました"}
+    function loadSaved(){const saved=localStorage.getItem("characterPresetJson");if(saved){$("jsonInput").value=saved;generate();$("status").textContent="母艦のJSONを読み込みました"}else{$("status").textContent="保存されたJSONがありません"}}
+    $("generate").onclick=generate;$("copy").onclick=copy;$("clear").onclick=()=>$("output").value="";$("sample").onclick=()=>{$("jsonInput").value=JSON.stringify(sample,null,2);generate()};$("loadSaved").onclick=loadSaved;generate();
+  </script>
+</body>
+</html>
