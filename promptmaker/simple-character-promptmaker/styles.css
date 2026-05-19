@@ -115,6 +115,34 @@ h2 {
   padding: 0 0 14px;
 }
 
+.preset-panel {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.preset-head {
+  display: grid;
+  gap: 2px;
+}
+
+.preset-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.preset-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .output-panel {
   position: sticky;
   top: 0;
@@ -229,6 +257,7 @@ input::placeholder {
 .mode-button,
 .primary-action,
 .field-button,
+.preset-button,
 .quiet-button {
   min-height: 42px;
   border: 1px solid var(--line);
@@ -257,6 +286,17 @@ input::placeholder {
   width: 100%;
   background: transparent;
   color: var(--ink);
+}
+
+.preset-button {
+  flex: 1 1 132px;
+  background: transparent;
+  color: var(--ink);
+}
+
+.preset-button:hover,
+.preset-button:focus-visible {
+  border-color: var(--accent);
 }
 
 .copy-button:disabled {
@@ -290,17 +330,22 @@ input::placeholder {
     padding-bottom: 0;
   }
 
+  .preset-panel {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
   .output-panel {
     position: sticky;
     top: 20px;
     align-self: start;
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 4;
     margin-bottom: 0;
   }
 
   .form-panel {
     grid-column: 1;
-    grid-row: 3;
+    grid-row: 4;
   }
 }

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="短い日本語入力から、画像生成AI向けの自然なキャラクタープロンプトを作るツールです。">
   <title>キャラクタープロンプトメーカー</title>
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./app.js" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=20260519-presets">
+  <script src="./app.js?v=20260519-presets" defer></script>
 </head>
 <body>
   <main class="app">
@@ -23,6 +23,14 @@
       <button class="quiet-button" type="button" id="sampleButton">例を入れる</button>
       <button class="quiet-button" type="reset" form="promptForm">空にする</button>
     </div>
+
+    <section class="preset-panel" aria-label="キャラクタープリセット">
+      <div class="preset-head">
+        <h2>プリセット</h2>
+        <p>用途から選んで、あとで細部を直す。</p>
+      </div>
+      <div class="preset-actions" id="presetActions"></div>
+    </section>
 
     <section class="panel output-panel" aria-label="生成結果">
       <div class="panel-head">

@@ -66,6 +66,145 @@ const sample = {
   line: "朝はまだ遠かった"
 };
 
+const presets = {
+  "透明素材": {
+    style: "ガラス細工調",
+    outline: "アウトラインあり",
+    outlineWeight: "細く淡い線",
+    proportion: "6頭身",
+    age: "年齢不詳",
+    bodyType: "華奢",
+    faceType: "人形のような顔",
+    expression: "静かな表情",
+    hairColor: "白髪",
+    hairStyle: "ショートボブ",
+    bangs: "目にかかる前髪",
+    eyes: "透き通った目",
+    eyeShape: "伏し目がちな目",
+    feature: "白い肌",
+    outerTop: "白いシャツ",
+    inner: "ハイネック",
+    bottom: "ロングスカート",
+    shoes: "ショートブーツ",
+    direction: "正面を向いている",
+    range: "全身",
+    action: "立っている",
+    background: "透明背景",
+    mood: "透明感のある静けさ"
+  },
+  "漫画主人公": {
+    style: "漫画風",
+    outline: "アウトラインあり",
+    outlineWeight: "太くはっきりした線",
+    proportion: "6頭身",
+    age: "10代後半",
+    bodyType: "すらっとした体型",
+    faceType: "幼い顔",
+    expression: "少し笑っている",
+    faceItem: "そばかす",
+    hairColor: "黒髪",
+    hairStyle: "ショートヘア",
+    bangs: "斜め前髪",
+    eyes: "黒い目",
+    eyeShape: "大きな目",
+    feature: "八重歯",
+    outerTop: "セーラー襟の上着",
+    inner: "白インナー",
+    bottom: "ショートパンツ",
+    headItem: "頭にヘッドホン",
+    armItem: "腕にリストバンド",
+    shoes: "スニーカー",
+    direction: "斜め前を向いている",
+    range: "膝上まで",
+    action: "手を伸ばしている",
+    background: "淡い青背景",
+    mood: "やわらかい朝"
+  },
+  "静かな雑誌向け": {
+    style: "フィルム写真風",
+    outline: "アウトラインなし",
+    outlineWeight: "",
+    proportion: "7頭身",
+    age: "20代前半",
+    bodyType: "細身",
+    faceType: "中性的な顔",
+    expression: "遠くを見ている表情",
+    faceItem: "ピアス",
+    hairColor: "青みのある黒髪",
+    hairStyle: "セミロング",
+    bangs: "センター分け",
+    eyes: "黒い目",
+    eyeShape: "切れ長の目",
+    feature: "長いまつげ",
+    outerTop: "長いコート",
+    inner: "薄いニット",
+    bottom: "細身のパンツ",
+    chestItem: "胸にペンダント",
+    shoes: "革靴",
+    direction: "少し振り返っている",
+    range: "腰上まで",
+    action: "歩いている",
+    background: "白背景",
+    mood: "ひんやりした空気"
+  },
+  "相棒キャラ": {
+    style: "ぬいぐるみ風",
+    outline: "アウトラインあり",
+    outlineWeight: "やわらかい薄い線",
+    proportion: "3頭身",
+    age: "年齢不詳",
+    bodyType: "小柄",
+    faceType: "やわらかい顔",
+    expression: "少し笑っている",
+    hairColor: "茶髪",
+    hairStyle: "ボブ",
+    bangs: "ぱっつん前髪",
+    eyes: "琥珀色の目",
+    eyeShape: "丸い目",
+    feature: "小さなほくろ",
+    outerTop: "大きめのパーカー",
+    inner: "無地のシャツ",
+    bottom: "ワイドパンツ",
+    headItem: "頭に小さな帽子",
+    armItem: "腕に手袋",
+    waistItem: "腰にポーチ",
+    shoes: "ショートブーツ",
+    direction: "正面を向いている",
+    range: "全身",
+    action: "座っている",
+    background: "ベージュ背景",
+    mood: "あたたかい夕暮れ"
+  },
+  "SNS素材": {
+    style: "3Dフィギュア風",
+    outline: "アウトラインあり",
+    outlineWeight: "普通の濃さの線",
+    proportion: "5頭身",
+    age: "20代前半",
+    bodyType: "中性的な体型",
+    faceType: "やわらかい顔",
+    expression: "静かな表情",
+    faceItem: "丸眼鏡",
+    hairColor: "淡い紫の髪",
+    hairStyle: "ショートボブ",
+    bangs: "長い前髪",
+    eyes: "青い目",
+    eyeShape: "たれ目",
+    feature: "白い肌",
+    outerTop: "黒いジャケット",
+    inner: "白インナー",
+    bottom: "ロングスカート",
+    chestItem: "胸にブローチ",
+    waistItem: "腰にベルト",
+    shoes: "ローファー",
+    direction: "正面を向いている",
+    range: "バストアップ",
+    action: "立っている",
+    background: "グレー背景",
+    mood: "少し不思議な空気"
+  }
+};
+
 const options = {
   style: [
     "ガラス細工調",
@@ -145,6 +284,7 @@ const sampleButton = document.querySelector("#sampleButton");
 const randomButton = document.querySelector("#randomButton");
 const poemButton = document.querySelector("#poemButton");
 const modeButton = document.querySelector("#modeButton");
+const presetActions = document.querySelector("#presetActions");
 
 function clean(value) {
   return String(value || "")
@@ -227,6 +367,20 @@ function setValues(data) {
     document.querySelector(`#${field.id}`).value = data[field.id] || "";
   });
   render();
+}
+
+function createPresetButtons() {
+  if (!presetActions) return;
+  presetActions.innerHTML = Object.keys(presets).map((name) => (
+    `<button class="preset-button" type="button" data-preset="${name}">${name}</button>`
+  )).join("");
+}
+
+function applyPreset(name) {
+  const preset = presets[name];
+  if (!preset) return;
+  setValues(preset);
+  if (!preset.line) generatePoemLine();
 }
 
 function loadState() {
@@ -384,6 +538,14 @@ form.addEventListener("click", (event) => {
   input.dispatchEvent(new Event("input", { bubbles: true }));
 });
 
+if (presetActions) {
+  presetActions.addEventListener("click", (event) => {
+    const button = event.target.closest(".preset-button");
+    if (!button) return;
+    applyPreset(button.dataset.preset);
+  });
+}
+
 copyButton.addEventListener("click", copyPrompt);
 randomButton.addEventListener("click", setRandomValues);
 sampleButton.addEventListener("click", () => setValues(sample));
@@ -393,6 +555,7 @@ modeButton.addEventListener("click", () => {
   applyTheme(current === "dark" ? "light" : "dark");
 });
 
+createPresetButtons();
 createChoiceButtons();
 loadTheme();
 loadState();
