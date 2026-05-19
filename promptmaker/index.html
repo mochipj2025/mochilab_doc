@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Promptmaker Tools</title>
+  <title>Promptmaker</title>
   <style>
     :root {
       --bg: #f7f4ee;
@@ -70,6 +70,13 @@
       font-size: 14px;
     }
 
+    .section-label {
+      margin: 26px 0 10px;
+      color: var(--sea);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     .tool-link {
       display: block;
       border: 2px solid var(--line);
@@ -79,6 +86,17 @@
       background: rgba(255, 253, 248, 0.88);
       text-decoration: none;
       box-shadow: 0 18px 42px rgba(32, 46, 52, 0.08);
+    }
+
+    .tool-link.primary {
+      border-color: var(--sea);
+      background: var(--sea);
+      color: var(--surface);
+    }
+
+    .tool-link.primary strong,
+    .tool-link.primary span {
+      color: var(--surface);
     }
 
     .tool-link + .tool-link {
@@ -104,19 +122,21 @@
   <main>
     <div class="shell">
       <p class="eyebrow">M.O.C.H.I. LABO / Promptmaker</p>
-      <h1>Promptmaker Tools</h1>
-      <p class="lead">小さく試して、使える形に育てるプロンプト制作ツールの入口です。</p>
-      <a class="tool-link" href="simple-character-promptmaker/">
+      <h1>Promptmaker</h1>
+      <p class="lead">日本語の短い入力から、画像生成AIに渡しやすいPromptを作る道具置き場です。</p>
+      <p class="section-label">いま使う</p>
+      <a class="tool-link primary" href="simple-character-promptmaker/">
         <strong>キャラクタープロンプトメーカー</strong>
-        <span>短い日本語入力から、自然な箇条書きのキャラクタープロンプトを作ります。</span>
+        <span>短い日本語入力と候補選択で、自然な箇条書きのキャラクターPromptを作ります。</span>
       </a>
+      <p class="section-label">試作</p>
       <a class="tool-link" href="dev/companion-maker.html">
         <strong>あなただけの相棒maker</strong>
-        <span>言葉の組み合わせから、三面図用キャラクタープロンプトを作ります。</span>
+        <span>小さな相棒キャラの三面図Promptを作る試作品です。</span>
       </a>
       <a class="tool-link" href="dev/character-promptmaker/">
         <strong>キャラ案メモ maker</strong>
-        <span>Prompt化する前のキャラクター設定メモを、ランダム生成と固定で作ります。</span>
+        <span>Prompt化する前のキャラクター設定メモを作る試作品です。</span>
       </a>
     </div>
   </main>
