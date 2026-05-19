@@ -143,6 +143,7 @@ const output = document.querySelector("#promptOutput");
 const copyButton = document.querySelector("#copyButton");
 const sampleButton = document.querySelector("#sampleButton");
 const randomButton = document.querySelector("#randomButton");
+const poemButton = document.querySelector("#poemButton");
 const modeButton = document.querySelector("#modeButton");
 
 function clean(value) {
@@ -309,6 +310,46 @@ function setRandomValues() {
     data[field.id] = values.length ? pickRandom(values) : "";
   });
   setValues(data);
+  generatePoemLine();
+}
+
+function includesAny(text, words) {
+  return words.some((word) => text.includes(word));
+}
+
+function moodSeed() {
+  const source = [
+    getValue("style"),
+    getValue("expression"),
+    getValue("action"),
+    getValue("background"),
+    getValue("mood")
+  ].join(" ");
+
+  if (includesAny(source, ["雨", "夜", "路地", "駅", "ひんやり"])) {
+    return ["まだ夜の匂いが残っていた", "雨音だけが、少し近かった", "帰り道は、まだ決まっていない", "光だけが、遅れて届いた"];
+  }
+  if (includesAny(source, ["朝", "白", "透明", "淡い", "水彩", "ガラス"])) {
+    return ["朝の光が、そっと輪郭をなぞった", "小さな透明感だけが残っていた", "まだ名前のない朝だった", "光は静かにそこへ落ちた"];
+  }
+  if (includesAny(source, ["森", "図書", "本", "絵本", "児童書"])) {
+    return ["ページの外で、風が待っていた", "物語はまだ閉じていなかった", "小さな秘密だけが残っていた", "誰も知らない続きがあった"];
+  }
+  if (includesAny(source, ["踊", "歩", "手を伸ば", "振り返"])) {
+    return ["動き出す前の静けさがあった", "その一歩だけが、空気を変えた", "手の先に、まだ言葉が残っていた", "振り返るには少し早かった"];
+  }
+  if (includesAny(source, ["粘土", "羊毛", "木彫", "ぬいぐるみ", "陶器"])) {
+    return ["小さな手触りが、そこに残った", "やわらかな形だけが息をしていた", "静かな温度を持っていた", "触れたら消えそうな距離だった"];
+  }
+
+  return ["朝はまだ遠かった", "光だけが残っていた", "今日はここで待っている", "名前を呼ばれた気がした", "まだ帰らなくていい", "小さな音だけが聞こえた"];
+}
+
+function generatePoemLine() {
+  const lineInput = document.querySelector("#line");
+  const seeds = moodSeed();
+  lineInput.value = pickRandom(seeds);
+  lineInput.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
 function applyTheme(theme) {
@@ -346,6 +387,7 @@ form.addEventListener("click", (event) => {
 copyButton.addEventListener("click", copyPrompt);
 randomButton.addEventListener("click", setRandomValues);
 sampleButton.addEventListener("click", () => setValues(sample));
+poemButton.addEventListener("click", generatePoemLine);
 modeButton.addEventListener("click", () => {
   const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
   applyTheme(current === "dark" ? "light" : "dark");

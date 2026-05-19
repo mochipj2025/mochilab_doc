@@ -228,6 +228,7 @@ input::placeholder {
 .copy-button,
 .mode-button,
 .primary-action,
+.field-button,
 .quiet-button {
   min-height: 42px;
   border: 1px solid var(--line);
@@ -250,6 +251,12 @@ input::placeholder {
   background: var(--accent);
   color: var(--accent-ink);
   font-weight: 700;
+}
+
+.field-button {
+  width: 100%;
+  background: transparent;
+  color: var(--ink);
 }
 
 .copy-button:disabled {
