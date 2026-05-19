@@ -158,7 +158,7 @@ h2 {
 
 .field {
   display: grid;
-  gap: 5px;
+  gap: 6px;
 }
 
 label {
@@ -187,8 +187,33 @@ input::placeholder {
   color: color-mix(in srgb, var(--muted) 72%, transparent);
 }
 
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.choice-button {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.choice-button.is-active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--ink);
+}
+
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 8px 4px 2px;
 }
@@ -221,7 +246,7 @@ input::placeholder {
 }
 
 .quiet-button {
-  flex: 1;
+  flex: 1 1 120px;
 }
 
 @media (min-width: 760px) {

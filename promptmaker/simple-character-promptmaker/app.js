@@ -58,12 +58,43 @@ const sample = {
   line: "朝はまだ遠かった"
 };
 
+const options = {
+  style: ["ガラス細工調", "木彫り風", "粘土風", "羊毛フェルト風", "水彩風", "漫画風", "アニメ風"],
+  proportion: ["2頭身", "3頭身", "5頭身", "6頭身", "7頭身", "8頭身"],
+  age: ["10代後半", "20代前半", "20代後半", "30代前半", "年齢不詳", "大人びた雰囲気"],
+  bodyType: ["細身", "小柄", "華奢", "すらっとした体型", "丸みのある体型", "中性的な体型"],
+  faceType: ["中性的な顔", "幼い顔", "大人っぽい顔", "無表情が似合う顔", "やわらかい顔", "人形のような顔"],
+  expression: ["眠そうな表情", "静かな表情", "少し笑っている", "無表情", "困ったような表情", "遠くを見ている表情"],
+  faceItem: ["眼帯", "丸眼鏡", "ピアス", "そばかす", "泣きぼくろ", "小さな傷"],
+  hairStyle: ["金髪ショートボブ", "黒髪ロング", "白髪ボブ", "銀髪ショート", "茶髪ウルフ", "青みのあるセミロング"],
+  bangs: ["斜め前髪", "ぱっつん前髪", "長い前髪", "センター分け", "目にかかる前髪", "前髪なし"],
+  eyes: ["赤い目", "青い目", "黒い目", "琥珀色の目", "眠そうな目", "透き通った目"],
+  feature: ["八重歯", "長いまつげ", "小さなほくろ", "尖った耳", "白い肌", "少し猫背"],
+  outerTop: ["和装上衣", "黒いジャケット", "白いシャツ", "大きめのパーカー", "セーラー襟の上着", "長いコート"],
+  inner: ["白インナー", "黒インナー", "ハイネック", "薄いニット", "レースのインナー", "無地のシャツ"],
+  bottom: ["ミニスカート", "ロングスカート", "ショートパンツ", "細身のパンツ", "袴風スカート", "ワイドパンツ"],
+  headItem: ["頭に狐面", "頭にリボン", "頭に小さな帽子", "頭に花飾り", "頭にヘッドホン", "頭にベール"],
+  armItem: ["腕に包帯", "腕にブレスレット", "腕に手袋", "腕にリストバンド", "腕に袖飾り", "腕に細い鎖"],
+  chestItem: ["胸にエンブレム", "胸にブローチ", "胸に小さな花", "胸に名札", "胸にリボン", "胸にペンダント"],
+  backItem: ["背中にギター", "背中に小さな羽", "背中にリュック", "背中に長い布", "背中に剣", "背中に傘"],
+  waistItem: ["腰に鎖", "腰にポーチ", "腰にリボン", "腰にベルト", "腰に小さな本", "腰に鍵束"],
+  legItem: ["足にニーハイ", "足に包帯", "足にレッグウォーマー", "足に飾り紐", "足に模様入りタイツ", "足に細いベルト"],
+  shoes: ["厚底ブーツ", "革靴", "スニーカー", "ローファー", "サンダル", "ショートブーツ"],
+  direction: ["正面を向いている", "横を向いている", "少し振り返っている", "うつむいている", "上を見ている", "斜め前を向いている"],
+  range: ["顔アップ", "バストアップ", "腰上まで", "膝上まで", "全身", "引き構図"],
+  action: ["立っている", "歩いている", "踊っている", "座っている", "手を伸ばしている", "本を読んでいる"],
+  background: ["雨の路地裏", "白い部屋", "夜の駅", "森の小道", "古い図書室", "夕方の屋上"],
+  mood: ["静かな雨の夜", "やわらかい朝", "少し不思議な空気", "ひんやりした空気", "あたたかい夕暮れ", "透明感のある静けさ"],
+  line: ["朝はまだ遠かった", "光だけが残っていた", "今日はここで待っている", "名前を呼ばれた気がした", "まだ帰らなくていい", "小さな音だけが聞こえた"]
+};
+
 const storageKey = "simple-character-promptmaker";
 const themeKey = "simple-character-promptmaker-theme";
 const form = document.querySelector("#promptForm");
 const output = document.querySelector("#promptOutput");
 const copyButton = document.querySelector("#copyButton");
 const sampleButton = document.querySelector("#sampleButton");
+const randomButton = document.querySelector("#randomButton");
 const modeButton = document.querySelector("#modeButton");
 
 function clean(value) {
@@ -104,6 +135,28 @@ function buildPrompt() {
   return groups.filter(Boolean).map((group) => group.join("\n")).join("\n\n");
 }
 
+function createChoiceButtons() {
+  fields.forEach((field) => {
+    const values = options[field.id] || [];
+    const input = document.querySelector(`#${field.id}`);
+    if (!values.length || !input) return;
+    const choices = document.createElement("div");
+    choices.className = "choices";
+    choices.setAttribute("aria-label", `${input.labels[0].textContent}の候補`);
+    choices.innerHTML = values.map((value) => (
+      `<button class="choice-button" type="button" data-target="${field.id}" data-value="${value}">${value}</button>`
+    )).join("");
+    input.insertAdjacentElement("afterend", choices);
+  });
+}
+
+function updateChoiceStates() {
+  document.querySelectorAll(".choice-button").forEach((button) => {
+    const input = document.querySelector(`#${button.dataset.target}`);
+    button.classList.toggle("is-active", input && input.value === button.dataset.value);
+  });
+}
+
 function saveState() {
   const data = {};
   fields.forEach((field) => {
@@ -116,6 +169,7 @@ function render() {
   const prompt = buildPrompt();
   output.textContent = prompt;
   copyButton.disabled = !prompt;
+  updateChoiceStates();
   saveState();
 }
 
@@ -145,6 +199,19 @@ async function copyPrompt() {
   }, 1200);
 }
 
+function pickRandom(values) {
+  return values[Math.floor(Math.random() * values.length)];
+}
+
+function setRandomValues() {
+  const data = {};
+  fields.forEach((field) => {
+    const values = options[field.id] || [];
+    data[field.id] = values.length ? pickRandom(values) : "";
+  });
+  setValues(data);
+}
+
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   modeButton.textContent = theme === "dark" ? "明色" : "暗色";
@@ -168,12 +235,23 @@ form.addEventListener("reset", () => {
   window.setTimeout(render, 0);
 });
 
+form.addEventListener("click", (event) => {
+  const button = event.target.closest(".choice-button");
+  if (!button) return;
+  const input = document.querySelector(`#${button.dataset.target}`);
+  if (!input) return;
+  input.value = button.dataset.value;
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+});
+
 copyButton.addEventListener("click", copyPrompt);
+randomButton.addEventListener("click", setRandomValues);
 sampleButton.addEventListener("click", () => setValues(sample));
 modeButton.addEventListener("click", () => {
   const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
   applyTheme(current === "dark" ? "light" : "dark");
 });
 
+createChoiceButtons();
 loadTheme();
 loadState();
