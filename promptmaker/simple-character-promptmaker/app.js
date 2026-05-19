@@ -237,14 +237,65 @@ function loadState() {
   }
 }
 
+function setCopyButtonLabel(text) {
+  copyButton.textContent = text;
+  window.setTimeout(() => {
+    copyButton.textContent = "コピー";
+  }, 2200);
+}
+
+function copyWithFallback(text) {
+  const copySource = document.createElement("textarea");
+  copySource.value = text;
+  copySource.setAttribute("readonly", "");
+  copySource.style.position = "fixed";
+  copySource.style.left = "-9999px";
+  copySource.style.top = "0";
+  document.body.appendChild(copySource);
+  copySource.focus();
+  copySource.select();
+  copySource.setSelectionRange(0, copySource.value.length);
+  const copied = document.execCommand("copy");
+  copySource.remove();
+  return copied;
+}
+
+function selectOutputText() {
+  const selection = window.getSelection();
+  const range = document.createRange();
+  range.selectNodeContents(output);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function copySelectedOutput() {
+  selectOutputText();
+  return document.execCommand("copy");
+}
+
 async function copyPrompt() {
   const prompt = buildPrompt();
   if (!prompt) return;
-  await navigator.clipboard.writeText(prompt);
-  copyButton.textContent = "コピー済み";
-  window.setTimeout(() => {
-    copyButton.textContent = "コピー";
-  }, 1200);
+
+  if (copyWithFallback(prompt) || copySelectedOutput()) {
+    setCopyButtonLabel("コピー済み");
+    return;
+  }
+
+  try {
+    if (globalThis.navigator && navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(prompt);
+      setCopyButtonLabel("コピー済み");
+      return;
+    }
+  } catch {
+    selectOutputText();
+    setCopyButtonLabel("選択しました");
+    return;
+  }
+
+  selectOutputText();
+  setCopyButtonLabel("選択しました");
 }
 
 function pickRandom(values) {
