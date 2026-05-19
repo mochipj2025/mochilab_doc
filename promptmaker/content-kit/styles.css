@@ -60,7 +60,23 @@ h2 { font-size: 16px; }
   margin-top: 16px;
 }
 
-.primary, .quiet {
+.preset-panel {
+  margin-top: 14px;
+}
+
+.preset-panel h2 {
+  margin-bottom: 8px;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.preset-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.primary, .quiet, .preset-button {
   min-height: 44px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -79,6 +95,13 @@ h2 { font-size: 16px; }
   flex: 1;
   background: var(--surface);
   color: var(--ink);
+}
+
+.preset-button {
+  min-height: 36px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
 }
 
 .panel {

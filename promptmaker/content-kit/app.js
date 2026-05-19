@@ -52,9 +52,98 @@ const labels = {
   avoid: "避けるもの"
 };
 
+const presets = {
+  "コマなし漫画": {
+    contentType: "コマなし漫画",
+    purpose: "漫画の導入",
+    format: "縦長 4:5",
+    mangaCut: "コマ割りなしの一枚漫画",
+    magazineLayout: "余白のある漫画扉ページ",
+    composition: "コマ枠なしで一枚絵として見せる",
+    camera: "腰上までの中距離",
+    subject: "静かな表情のキャラクター",
+    scene: "余白のある誌面背景",
+    action: "歩き出す直前",
+    item: "小さな本、街灯、濡れた床",
+    textArea: "文字なしで使える構図",
+    tone: "静かで余韻のある雰囲気",
+    style: "静かな漫画誌面",
+    avoid: "文字の詰め込み、派手な演出"
+  },
+  "雑誌扉": {
+    contentType: "雑誌特集ページ",
+    purpose: "世界観紹介",
+    format: "A4縦",
+    mangaCut: "セリフなしの情景カット",
+    magazineLayout: "余白のある特集扉ページ",
+    composition: "人物を右寄せ、左に余白",
+    camera: "全身",
+    subject: "余白の似合うキャラクター",
+    scene: "静かな研究室",
+    action: "窓の外を見ている",
+    item: "見出し用の余白、細い罫線",
+    textArea: "左側に縦書きコピー用の余白",
+    tone: "落ち着いた編集感",
+    style: "雑誌特集ページ風",
+    avoid: "過剰な装飾、強い広告感"
+  },
+  "note見出し": {
+    contentType: "note見出し画像",
+    purpose: "note記事の見出し画像",
+    format: "横長 16:9",
+    mangaCut: "導入の引きカット",
+    magazineLayout: "コラム挿絵ページ",
+    composition: "人物を右寄せ、左に余白",
+    camera: "バストアップ",
+    subject: "静かな表情のキャラクター",
+    scene: "白い部屋",
+    action: "座って考えている",
+    item: "マグカップ、紙片、ペン",
+    textArea: "上部に短い見出し用の余白",
+    tone: "やわらかく読みやすい雰囲気",
+    style: "余白のあるnoteサムネ風",
+    avoid: "強い煽り文句"
+  },
+  "SNSカルーセル": {
+    contentType: "SNSカルーセル1枚目",
+    purpose: "SNS告知",
+    format: "正方形 1:1",
+    mangaCut: "決めゴマ",
+    magazineLayout: "見出しが大きい雑誌表紙",
+    composition: "中央に人物、周囲に大きな余白",
+    camera: "バストアップ",
+    subject: "雨の日の案内役",
+    scene: "余白のある誌面背景",
+    action: "小さく手を振っている",
+    item: "小さなアイコン、キャプション枠",
+    textArea: "雑誌タイトルを置ける広い余白",
+    tone: "あたたかいけれど控えめ",
+    style: "落ち着いたSNSカルーセル風",
+    avoid: "文字の詰め込み、派手な演出"
+  },
+  "キャラ紹介": {
+    contentType: "キャラクター紹介ページ",
+    purpose: "キャラクター紹介",
+    format: "縦長 9:16",
+    mangaCut: "表情アップ",
+    magazineLayout: "図鑑風の紹介ページ",
+    composition: "下部に人物、上部に見出し余白",
+    camera: "全身",
+    subject: "余白の似合うキャラクター",
+    scene: "余白のある誌面背景",
+    action: "振り返っている",
+    item: "小さなアイコン、キャプション枠",
+    textArea: "下部にキャプション用の余白",
+    tone: "透明感のある静けさ",
+    style: "日本語ミニマル編集デザイン",
+    avoid: "読みにくい小文字、情報過多"
+  }
+};
+
 const output = document.querySelector("#output");
 const copyButton = document.querySelector("#copyButton");
 const randomButton = document.querySelector("#randomButton");
+const presetActions = document.querySelector("#presetActions");
 const form = document.querySelector("#kitForm");
 
 function valueOf(id) {
@@ -105,6 +194,13 @@ function setRandomValues() {
   render();
 }
 
+function setValues(values) {
+  fields.forEach((id) => {
+    document.querySelector(`#${id}`).value = values[id] || "";
+  });
+  render();
+}
+
 function copyFallback(text) {
   const source = document.createElement("textarea");
   source.value = text;
@@ -150,6 +246,12 @@ function createChoices() {
   });
 }
 
+function createPresets() {
+  presetActions.innerHTML = Object.keys(presets).map((name) => (
+    `<button class="preset-button" type="button" data-preset="${name}">${name}</button>`
+  )).join("");
+}
+
 function updateChoiceStates() {
   document.querySelectorAll(".choice").forEach((button) => {
     const input = document.querySelector(`#${button.dataset.target}`);
@@ -166,8 +268,15 @@ form.addEventListener("click", (event) => {
   render();
 });
 
+presetActions.addEventListener("click", (event) => {
+  const button = event.target.closest(".preset-button");
+  if (!button) return;
+  setValues(presets[button.dataset.preset]);
+});
+
 randomButton.addEventListener("click", setRandomValues);
 copyButton.addEventListener("click", copyPrompt);
 
+createPresets();
 createChoices();
 render();
