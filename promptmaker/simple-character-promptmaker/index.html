@@ -18,6 +18,12 @@
       <button class="mode-button" type="button" id="modeButton" aria-pressed="false">暗色</button>
     </header>
 
+    <div class="quick-actions" aria-label="すぐ使う操作">
+      <button class="primary-action" type="button" id="randomButton">おまかせ</button>
+      <button class="quiet-button" type="button" id="sampleButton">例を入れる</button>
+      <button class="quiet-button" type="reset" form="promptForm">空にする</button>
+    </div>
+
     <section class="panel output-panel" aria-label="生成結果">
       <div class="panel-head">
         <h2>出力</h2>
@@ -32,6 +38,14 @@
         <div class="field">
           <label for="style">スタイル</label>
           <input id="style" name="style" list="styleList" placeholder="ガラス細工調">
+        </div>
+        <div class="field">
+          <label for="outline">アウトライン</label>
+          <input id="outline" name="outline" placeholder="アウトラインあり">
+        </div>
+        <div class="field">
+          <label for="outlineWeight">線の濃さ</label>
+          <input id="outlineWeight" name="outlineWeight" placeholder="細く淡い線">
         </div>
       </section>
 
@@ -176,8 +190,6 @@
       </section>
 
       <div class="actions">
-        <button class="quiet-button" type="button" id="randomButton">おまかせ</button>
-        <button class="quiet-button" type="button" id="sampleButton">例を入れる</button>
         <button class="quiet-button" type="reset">空にする</button>
       </div>
     </form>

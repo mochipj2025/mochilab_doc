@@ -1,5 +1,7 @@
 const fields = [
   { id: "style", group: 0 },
+  { id: "outline", group: 0 },
+  { id: "outlineWeight", group: 0 },
   { id: "proportion", group: 1 },
   { id: "age", group: 1 },
   { id: "bodyType", group: 1 },
@@ -32,6 +34,8 @@ const fields = [
 
 const sample = {
   style: "ガラス細工調",
+  outline: "アウトラインあり",
+  outlineWeight: "細く淡い線",
   proportion: "6頭身",
   age: "20代前半",
   bodyType: "細身",
@@ -100,6 +104,8 @@ const options = {
     "フィルム写真風",
     "シネマ風"
   ],
+  outline: ["アウトラインあり", "アウトラインなし"],
+  outlineWeight: ["細く淡い線", "細く濃い線", "普通の濃さの線", "太くはっきりした線", "やわらかい薄い線", "黒く強い線"],
   proportion: ["2頭身", "3頭身", "5頭身", "6頭身", "7頭身", "8頭身"],
   age: ["10代後半", "20代前半", "20代後半", "30代前半", "年齢不詳", "大人びた雰囲気"],
   bodyType: ["細身", "小柄", "華奢", "すらっとした体型", "丸みのある体型", "中性的な体型"],
