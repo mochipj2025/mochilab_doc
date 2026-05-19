@@ -11,6 +11,7 @@
 - `character-promptmaker/`
   - Prompt化する前のキャラクター設定メモを作る試作品
   - 現在の本命ツールではなく、発想メモ用
+  - トップには出さない
 
 - `image2-character-promptmaker.html`
   - 旧入口

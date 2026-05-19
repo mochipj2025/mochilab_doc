@@ -4,7 +4,7 @@ M.O.C.H.I. LABOのプロンプト制作ツール置き場です。
 
 ## Current Main Tool
 
-いま使う中心ツールは `simple-character-promptmaker/` です。
+いま使う中心ツールは `simple-character-promptmaker/` と `content-kit/` です。
 
 `dev/` は試作、記事メモ、旧入口を置く場所です。
 
@@ -24,6 +24,18 @@ M.O.C.H.I. LABOのプロンプト制作ツール置き場です。
   - 生成結果だけをコピー
   - 一言を現在の雰囲気に合わせて生成
 
+### Content Prompt Kit
+
+漫画カット、雑誌ページ、SNS素材など、キャラクターや世界観をコンテンツ化するためのPromptを作るツールです。
+
+- 場所: `content-kit/`
+- 入口: `index.html`
+- できること:
+  - 漫画カットの種類を選ぶ
+  - 雑誌レイアウトや文字スペースを選ぶ
+  - note見出し画像、SNSカルーセル、特集ページ向けにPromptを生成
+  - 生成結果をコピー
+
 ## Dev Prototypes
 
 ### あなただけの相棒maker
@@ -42,7 +54,7 @@ M.O.C.H.I. LABOのプロンプト制作ツール置き場です。
 ランダム生成と固定で、日本語のキャラクター設定メモを作る試作品です。
 
 - 場所: `dev/character-promptmaker/`
-- 入口: `index.html`
+- 入口: トップには出さない
 - できること:
   - 日本語UIから自然な日本語メモを生成
   - カテゴリごとのランダム生成と固定

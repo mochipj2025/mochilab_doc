@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="漫画カット、雑誌ページ、SNS素材向けの日本語Promptを作るキットです。">
+  <title>Content Prompt Kit</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <p class="eyebrow">Promptmaker</p>
+      <h1>Content Prompt Kit</h1>
+      <p>漫画のカット、雑誌風ページ、SNS素材に展開するためのPromptを作ります。</p>
+      <div class="actions">
+        <button class="primary" type="button" id="randomButton">おまかせ</button>
+        <button class="quiet" type="button" id="copyButton" disabled>コピー</button>
+        <button class="quiet" type="reset" form="kitForm">空にする</button>
+      </div>
+    </header>
+
+    <section class="panel output-panel" aria-label="生成結果">
+      <h2>出力</h2>
+      <pre id="output" class="output" aria-live="polite"></pre>
+    </section>
+
+    <form class="panel form-panel" id="kitForm" autocomplete="off">
+      <section class="group">
+        <h2>用途</h2>
+        <div class="field">
+          <label for="contentType">作るもの</label>
+          <input id="contentType" placeholder="漫画1コマ">
+        </div>
+        <div class="field">
+          <label for="purpose">用途</label>
+          <input id="purpose" placeholder="note記事の見出し画像">
+        </div>
+        <div class="field">
+          <label for="format">比率</label>
+          <input id="format" placeholder="縦長 4:5">
+        </div>
+      </section>
+
+      <section class="group">
+        <h2>見せ方</h2>
+        <div class="field">
+          <label for="mangaCut">漫画カット</label>
+          <input id="mangaCut" placeholder="導入の引きカット">
+        </div>
+        <div class="field">
+          <label for="magazineLayout">雑誌レイアウト</label>
+          <input id="magazineLayout" placeholder="余白のある特集扉ページ">
+        </div>
+        <div class="field">
+          <label for="composition">構図</label>
+          <input id="composition" placeholder="人物を右寄せ、左に余白">
+        </div>
+        <div class="field">
+          <label for="camera">カメラ</label>
+          <input id="camera" placeholder="腰上までの中距離">
+        </div>
+      </section>
+
+      <section class="group">
+        <h2>内容</h2>
+        <div class="field">
+          <label for="subject">主役</label>
+          <input id="subject" placeholder="静かな表情のキャラクター">
+        </div>
+        <div class="field">
+          <label for="scene">場面</label>
+          <input id="scene" placeholder="雨上がりの路地">
+        </div>
+        <div class="field">
+          <label for="action">動き</label>
+          <input id="action" placeholder="振り返っている">
+        </div>
+        <div class="field">
+          <label for="item">入れるもの</label>
+          <input id="item" placeholder="小さな本、街灯、濡れた床">
+        </div>
+      </section>
+
+      <section class="group">
+        <h2>誌面</h2>
+        <div class="field">
+          <label for="textArea">文字スペース</label>
+          <input id="textArea" placeholder="上部に短い見出し用の余白">
+        </div>
+        <div class="field">
+          <label for="tone">空気感</label>
+          <input id="tone" placeholder="静かで余韻のある雰囲気">
+        </div>
+        <div class="field">
+          <label for="style">表現</label>
+          <input id="style" placeholder="日本語ミニマル編集デザイン">
+        </div>
+        <div class="field">
+          <label for="avoid">避けるもの</label>
+          <input id="avoid" placeholder="過剰な装飾、強い広告感">
+        </div>
+      </section>
+    </form>
+  </main>
+</body>
+</html>
